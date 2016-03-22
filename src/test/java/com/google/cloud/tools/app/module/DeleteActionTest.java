@@ -16,6 +16,8 @@
 package com.google.cloud.tools.app.module;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +26,8 @@ import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.InvalidFlagException;
 import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
+import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
+import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -35,7 +39,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,89 +53,92 @@ public class DeleteActionTest {
 
   @Mock
   private ProcessCaller callerMock;
+  @Mock
+  private ProcessCallerFactory processCallerFactory;
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(processCallerFactory.newProcessCaller(eq(Tool.GCLOUD), isA(ArrayList.class)))
+        .thenReturn(callerMock);
     when(callerMock.call()).thenReturn(true);
   }
 
   @Test
-  public void testAlwaysPass() {
-
+  public void testNewDeleteAction() {
+    DeleteAction.newDeleteAction()
+        .setModules(ImmutableList.of("mod1", "mod2"))
+        .setVersion("v1")
+        .setServer("appengine.google.com");
   }
 
-//  @Test
-//  public void testPrepareCommand_noFlags() {
-//    DeleteAction action = new DeleteAction(
-//        ImmutableList.of("module1", "module2"),
-//        "v1",
-//        ImmutableMap.<Option, String>of());
-//
-//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
-//        "app", "modules", "delete", "module1", "module2", "--version", "v1", "--quiet");
-//    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
-//    assertEquals(expected, actual);
-//  }
-//
-//  @Test
-//  public void testPrepareCommand_withFlags() {
-//    Map<Option, String> flags = ImmutableMap.of(Option.SERVER, "server.com");
-//    DeleteAction action = new DeleteAction(
-//        ImmutableList.of("module1", "module2"),
-//        "v2",
-//        flags);
-//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview", "app",
-//        "modules", "delete", "module1", "module2", "--version", "v2", "--server", "server.com",
-//        "--quiet");
-//    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
-//    assertEquals(expected, actual);
-//  }
-//
-//  @Test(expected = IllegalArgumentException.class)
-//  public void testEmptyVersion() {
-//    new DeleteAction(ImmutableList.of("module1", "module2"), "", ImmutableMap.<Option, String>of());
-//  }
-//
-//  @Test(expected = IllegalArgumentException.class)
-//  public void testNullVersion() {
-//    new DeleteAction(ImmutableList.of("module1", "module2"), null,
-//        ImmutableMap.<Option, String>of());
-//  }
-//
-//  @Test
-//  public void testCheckFlags() {
-//    Map<Option, String> flags = ImmutableMap.of(
-//        Option.SERVER, "server.com"
-//    );
-//
-//    new DeleteAction(ImmutableList.of("module1", "module2"), "v1", flags);
-//  }
-//
-//  @Test
-//  public void testCheckFlags_oneFlag() {
-//    new DeleteAction(ImmutableList.of("module1", "module2"), "v1",
-//        ImmutableMap.<Option, String>of());
-//  }
-//
-//  @Test(expected = InvalidFlagException.class)
-//  public void testCheckFlags_error() {
-//    Map<Option, String> flags = ImmutableMap.of(
-//        Option.SERVER, "server.com",
-//        Option.ADMIN_HOST, "disallowed flag!!!"
-//    );
-//
-//    new DeleteAction(ImmutableList.of("module1", "module2"), "v1", flags);
-//  }
-//
-//  @Test
-//  public void testExecute() throws GCloudExecutionException, IOException {
-//    DeleteAction action = new DeleteAction(ImmutableList.of("module1", "module2"), "v1",
-//        ImmutableMap.<Option, String>of());
-//    action.setProcessCaller(callerMock);
-//
-//    action.execute();
-//
-//    verify(callerMock, times(1)).call();
-//  }
+  @Test(expected = IllegalArgumentException.class)
+  public void testNewDeleteAction_addTwoModules() {
+    DeleteAction.newDeleteAction()
+        .setModules(ImmutableList.of("mod1"))
+        .setModules(ImmutableList.of("mod2"));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testNewDeleteAction_addTwoVersions() {
+    DeleteAction.newDeleteAction()
+        .setVersion("v1")
+        .setVersion("v2");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testNewDeleteAction_addTwoServers() {
+    DeleteAction.newDeleteAction()
+        .setServer("appengine.google.com")
+        .setServer("appengine.google.com");
+  }
+
+  @Test
+  public void testArguments_all() throws GCloudExecutionException {
+    List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "mod2", "--version",
+        "v1", "--server", "appengine.google.com", "--quiet");
+
+    DeleteAction action = DeleteAction.newDeleteAction()
+        .setModules(ImmutableList.of("mod1", "mod2"))
+        .setVersion("v1")
+        .setServer("appengine.google.com");
+    action.setProcessCallerFactory(processCallerFactory);
+    action.execute();
+
+    verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(arguments));
+  }
+
+  @Test
+  public void testArguments_noModules() throws GCloudExecutionException {
+    List<String> arguments = ImmutableList.of("modules", "delete", "default", "--version", "v1",
+        "--server", "appengine.google.com", "--quiet");
+
+    DeleteAction action = DeleteAction.newDeleteAction()
+        .setVersion("v1")
+        .setServer("appengine.google.com");
+    action.setProcessCallerFactory(processCallerFactory);
+    action.execute();
+
+    verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(arguments));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testArguments_noVersion() throws GCloudExecutionException {
+    DeleteAction.newDeleteAction()
+        .setModules(ImmutableList.of("mod1"))
+        .execute();
+  }
+
+  @Test
+  public void testArguments_noServer() throws GCloudExecutionException {
+    List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "--version", "v1",
+        "--quiet");
+
+    DeleteAction action = DeleteAction.newDeleteAction()
+        .setModules(ImmutableList.of("mod1"))
+        .setVersion("v1");
+    action.setProcessCallerFactory(processCallerFactory);
+    action.execute();
+
+    verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(arguments));
+  }
 }
