@@ -44,7 +44,7 @@ flags.put(Option.PROMOTE, "true");
 flags.put(Option.FORCE, "true);
 
 // Create an action object.
-Action deployAction = new DeployAction(sourceDirectory, stagingDirectory, AppType.CLASSIC_APP_ENGINE, sdkRoot, flags);
+Action deployAction = new DeployAction(sourceDirectory, stagingDirectory, sdkRoot, flags);
 
 // Execute the action.
 deployAction.execute();
