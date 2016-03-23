@@ -16,9 +16,14 @@
 package com.google.cloud.tools.app.module;
 
 import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
+import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.module.ListConfiguration;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.ArrayList;
@@ -31,20 +36,26 @@ import java.util.Set;
  */
 public class ListAction extends Action {
 
-  private static Set<Option> acceptedFlags = ImmutableSet.of(Option.SERVER);
+  private ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
+  private ListConfiguration configuration;
 
-  public ListAction(List<String> modules, Map<Option, String> flags) {
-    super(flags);
-    checkFlags(flags, acceptedFlags);
+  public ListAction(ListConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
+  @Override
+  public boolean execute() throws GCloudExecutionException {
     List<String> arguments = new ArrayList<>();
     arguments.add("modules");
     arguments.add("list");
-    arguments.addAll(modules);
+    arguments.addAll(configuration.getModules());
 
-    this.processCaller = new ProcessCaller(
-        Tool.GCLOUD,
-        arguments,
-        flags);
+    return processCallerFactory.newProcessCaller(
+        Tool.GCLOUD, arguments, configuration.getOptionalParameters()).call();
+  }
+
+  @VisibleForTesting
+  public void setProcessCallerFactory(ProcessCallerFactory processCallerFactory) {
+    this.processCallerFactory = processCallerFactory;
   }
 }

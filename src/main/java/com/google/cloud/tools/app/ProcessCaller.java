@@ -180,5 +180,10 @@ public class ProcessCaller {
     public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments) {
       return new ProcessCaller(tool, arguments);
     }
+
+    public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments,
+        Map<Option, String> optionalParameters) {
+      return new ProcessCaller(tool, arguments, optionalParameters);
+    }
   }
 }

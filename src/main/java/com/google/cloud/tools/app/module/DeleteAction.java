@@ -17,13 +17,13 @@ package com.google.cloud.tools.app.module;
 
 import com.google.cloud.tools.app.Action;
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
 import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,40 +39,28 @@ public class DeleteAction extends Action {
   private String version = UNSET_STRING;
   private String server = UNSET_STRING;
 
-  public static DeleteAction newDeleteAction() {
-    return new DeleteAction();
-  }
-
-  public DeleteAction setModules(Collection<String> modules) {
-    Preconditions.checkArgument(this.modules == UNSET_COLLECTION, "Modules can only be set once.");
+  private DeleteAction(Collection<String> modules, String version) {
     this.modules = modules;
-    return this;
+    this.version = version;
   }
 
-  public DeleteAction setVersion(String version) {
-    Preconditions.checkArgument(this.version == UNSET_STRING, "Version can only be set once.");
-    this.version = version;
-    return this;
+  public static DeleteAction newDeleteAction(String version, String... modules) {
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(version));
+    Preconditions.checkArgument(modules.length > 0);
+    return new DeleteAction(ImmutableList.copyOf(modules), version);
   }
 
   public DeleteAction setServer(String server) {
-    Preconditions.checkArgument(this.server == UNSET_STRING, "Server can only be set once.");
     this.server = server;
     return this;
   }
 
   @Override
   public boolean execute() throws GCloudExecutionException {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(version));
-
     List<String> arguments = new ArrayList<>();
     arguments.add("modules");
     arguments.add("delete");
-    if (modules == null) {
-      arguments.add("default");
-    } else {
-      arguments.addAll(modules);
-    }
+    arguments.addAll(modules);
     arguments.add("--version");
     arguments.add(version);
     if (!Strings.isNullOrEmpty(server)) {

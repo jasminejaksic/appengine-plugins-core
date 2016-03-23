@@ -15,7 +15,6 @@
  */
 package com.google.cloud.tools.app.module;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
@@ -23,14 +22,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.InvalidFlagException;
-import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
 import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,12 +33,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Unit tests for {@link DeleteAction}.
@@ -65,31 +56,28 @@ public class DeleteActionTest {
 
   @Test
   public void testNewDeleteAction() {
-    DeleteAction.newDeleteAction()
-        .setModules(ImmutableList.of("mod1", "mod2"))
-        .setVersion("v1")
+    DeleteAction.newDeleteAction("v1", "mod1", "mod2")
         .setServer("appengine.google.com");
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_addTwoModules() {
-    DeleteAction.newDeleteAction()
-        .setModules(ImmutableList.of("mod1"))
-        .setModules(ImmutableList.of("mod2"));
+  @Test(expected = NullPointerException.class)
+  public void testNewDeleteAction_nullModules() throws GCloudExecutionException {
+    DeleteAction.newDeleteAction("v1", null).setServer("appengine.google.com");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_addTwoVersions() {
-    DeleteAction.newDeleteAction()
-        .setVersion("v1")
-        .setVersion("v2");
+  public void testNewDeleteAction_emptyModules() throws GCloudExecutionException {
+    DeleteAction.newDeleteAction("v1").setServer("appengine.google.com");
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_addTwoServers() {
-    DeleteAction.newDeleteAction()
-        .setServer("appengine.google.com")
-        .setServer("appengine.google.com");
+  public void testNewDeleteAction_nullVersion() {
+    DeleteAction.newDeleteAction(null, "mod1");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testNewDeleteAction_emptyVersion() {
+    DeleteAction.newDeleteAction("", "mod1");
   }
 
   @Test
@@ -97,35 +85,12 @@ public class DeleteActionTest {
     List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "mod2", "--version",
         "v1", "--server", "appengine.google.com", "--quiet");
 
-    DeleteAction action = DeleteAction.newDeleteAction()
-        .setModules(ImmutableList.of("mod1", "mod2"))
-        .setVersion("v1")
+    DeleteAction action = DeleteAction.newDeleteAction("v1", "mod1", "mod2")
         .setServer("appengine.google.com");
     action.setProcessCallerFactory(processCallerFactory);
     action.execute();
 
     verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(arguments));
-  }
-
-  @Test
-  public void testArguments_noModules() throws GCloudExecutionException {
-    List<String> arguments = ImmutableList.of("modules", "delete", "default", "--version", "v1",
-        "--server", "appengine.google.com", "--quiet");
-
-    DeleteAction action = DeleteAction.newDeleteAction()
-        .setVersion("v1")
-        .setServer("appengine.google.com");
-    action.setProcessCallerFactory(processCallerFactory);
-    action.execute();
-
-    verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(arguments));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testArguments_noVersion() throws GCloudExecutionException {
-    DeleteAction.newDeleteAction()
-        .setModules(ImmutableList.of("mod1"))
-        .execute();
   }
 
   @Test
@@ -133,9 +98,7 @@ public class DeleteActionTest {
     List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "--version", "v1",
         "--quiet");
 
-    DeleteAction action = DeleteAction.newDeleteAction()
-        .setModules(ImmutableList.of("mod1"))
-        .setVersion("v1");
+    DeleteAction action = DeleteAction.newDeleteAction("v1", "mod1");
     action.setProcessCallerFactory(processCallerFactory);
     action.execute();
 
