@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,25 +45,25 @@ public class ProcessCaller {
   private boolean synchronous;
   private String cloudSdkLocation = System.getProperty("user.home") + "/google-cloud-sdk";
 
-  private ProcessCaller(Tool tool, List<String> arguments) {
+  private ProcessCaller(Tool tool, Collection<String> arguments) {
     this(tool, arguments, ImmutableMap.<Option, String>of());
   }
 
-  public ProcessCaller(Tool tool, List<String> arguments, Map<Option, String> flags) {
+  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags) {
     this(tool, arguments, flags, DEFAULT_WORKING_DIR, true);
   }
 
-  public ProcessCaller(Tool tool, List<String> arguments, Map<Option, String> flags,
+  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
       File workingDirectory) {
     this(tool, arguments, flags, workingDirectory, true);
   }
 
-  public ProcessCaller(Tool tool, List<String> arguments, Map<Option, String> flags,
+  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
       boolean synchronous) {
     this(tool, arguments, flags, DEFAULT_WORKING_DIR, synchronous);
   }
 
-  public ProcessCaller(Tool tool, List<String> arguments, Map<Option, String> flags,
+  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
       File workingDirectory, boolean synchronous) {
     this.workingDirectory = workingDirectory;
     this.synchronous = synchronous;
@@ -131,7 +132,7 @@ public class ProcessCaller {
    *
    * <p>Obsoleted when gcloud CLI is no longer a dependency.
    */
-  protected List<String> prepareCommand(Tool tool, List<String> arguments,
+  protected List<String> prepareCommand(Tool tool, Collection<String> arguments,
       Map<Option, String> flags) {
     List<String> command = new ArrayList<>();
 
@@ -176,7 +177,7 @@ public class ProcessCaller {
   }
 
   public static class ProcessCallerFactory {
-    public ProcessCaller newProcessCaller(Tool tool, List<String> arguments) {
+    public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments) {
       return new ProcessCaller(tool, arguments);
     }
   }

@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class DeleteAction extends Action {
 
-  private static ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
+  private ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
   private Collection<String> modules = UNSET_COLLECTION;
   private String version = UNSET_STRING;
   private String server = UNSET_STRING;
@@ -76,7 +76,7 @@ public class DeleteAction extends Action {
     arguments.add("--version");
     arguments.add(version);
     if (!Strings.isNullOrEmpty(server)) {
-      arguments.add(Option.SERVER.getLongForm());
+      arguments.add("--server");
       arguments.add(server);
     }
     arguments.add("--quiet");
