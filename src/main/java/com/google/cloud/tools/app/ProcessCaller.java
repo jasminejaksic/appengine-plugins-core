@@ -43,25 +43,28 @@ public class ProcessCaller {
   private List<String> command;
   private final Path workingDirectory;
   private final boolean synchronous;
-  private static Path cloudSdkPath = Paths.get(System.getProperty("user.home"), "google-cloud-sdk");
+  private static Path cloudSdkPath;
 
-  public ProcessCaller(Tool tool, Collection<String> arguments) {
-    this(tool, arguments, DEFAULT_WORKING_DIR, true);
+  private ProcessCaller(Tool tool, Collection<String> arguments, Path cloudSdkPath) {
+    this(tool, arguments, DEFAULT_WORKING_DIR, true, cloudSdkPath);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory) {
-    this(tool, arguments, workingDirectory, true);
+  private ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory,
+      Path cloudSdkPath) {
+    this(tool, arguments, workingDirectory, true, cloudSdkPath);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, boolean synchronous) {
-    this(tool, arguments, DEFAULT_WORKING_DIR, synchronous);
+  private ProcessCaller(Tool tool, Collection<String> arguments, boolean synchronous,
+      Path cloudSdkPath) {
+    this(tool, arguments, DEFAULT_WORKING_DIR, synchronous, cloudSdkPath);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory,
-      boolean synchronous) {
+  private ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory,
+      boolean synchronous, Path cloudSdkPath) {
     this.workingDirectory = workingDirectory;
     this.synchronous = synchronous;
     this.command = prepareCommand(tool, arguments);
+    this.cloudSdkPath = cloudSdkPath;
   }
 
   public boolean call() throws GCloudExecutionException, IOException {
@@ -137,29 +140,6 @@ public class ProcessCaller {
     return command;
   }
 
-  public void setCloudSdkPath(String cloudSdkLocation) {
-    if (!Strings.isNullOrEmpty(cloudSdkLocation)) {
-      Path cloudSdkPath = Paths.get(cloudSdkLocation);
-      if (Files.notExists(cloudSdkPath)) {
-        throw new IllegalArgumentException("Provided Cloud SDK path does not exist.");
-      }
-      if (!Files.isDirectory(cloudSdkPath)) {
-        throw new IllegalArgumentException("Provided Cloud SDK path is not a directory.");
-      }
-      Path gcloudPath = Paths.get(cloudSdkLocation, "bin", "gcloud");
-      Path devAppserverPath = Paths.get(cloudSdkLocation, "bin", "dev_appserver.py");
-      if (Files.notExists(gcloudPath)) {
-        throw new IllegalArgumentException("gcloud can not be found at " + gcloudPath.toString());
-      }
-      if (Files.notExists(devAppserverPath)) {
-        throw new IllegalArgumentException(
-            "dev_appserver.py can not be found at " + devAppserverPath.toString());
-      }
-
-      this.cloudSdkPath = cloudSdkPath;
-    }
-  }
-
   public enum Tool {
     GCLOUD(getGCloudPath().toString(), "preview", "app"),
     DEV_APPSERVER(getDevAppserverPath().toString());
@@ -180,13 +160,39 @@ public class ProcessCaller {
   }
 
   public static class ProcessCallerFactory {
+
+    Path cloudSdkPath = Paths.get(System.getProperty("user.home"), "google-cloud-sdk");
+
     public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments) {
-      return new ProcessCaller(tool, arguments);
+      return newProcessCaller(tool, arguments, true);
     }
 
     public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments,
         Boolean synchronous) {
-      return new ProcessCaller(tool, arguments, synchronous);
+      return new ProcessCaller(tool, arguments, synchronous, cloudSdkPath);
+    }
+
+    public void setCloudSdkPath(String cloudSdkLocation) {
+      if (!Strings.isNullOrEmpty(cloudSdkLocation)) {
+        Path cloudSdkPath = Paths.get(cloudSdkLocation);
+        if (Files.notExists(cloudSdkPath)) {
+          throw new IllegalArgumentException("Provided Cloud SDK path does not exist.");
+        }
+        if (!Files.isDirectory(cloudSdkPath)) {
+          throw new IllegalArgumentException("Provided Cloud SDK path is not a directory.");
+        }
+        Path gcloudPath = Paths.get(cloudSdkLocation, "bin", "gcloud");
+        Path devAppserverPath = Paths.get(cloudSdkLocation, "bin", "dev_appserver.py");
+        if (Files.notExists(gcloudPath)) {
+          throw new IllegalArgumentException("gcloud can not be found at " + gcloudPath.toString());
+        }
+        if (Files.notExists(devAppserverPath)) {
+          throw new IllegalArgumentException(
+              "dev_appserver.py can not be found at " + devAppserverPath.toString());
+        }
+
+        this.cloudSdkPath = cloudSdkPath;
+      }
     }
   }
 }

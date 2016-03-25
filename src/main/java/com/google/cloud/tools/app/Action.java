@@ -29,12 +29,7 @@ public abstract class Action {
   /**
    * ProcessCaller factory.
    */
-  protected ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
-
-  /**
-   * Makes system calls to invoke processes.
-   */
-  protected ProcessCaller processCaller;
+  ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
 
   /**
    * Executes the logic implemented by this {@link Action}.
@@ -48,11 +43,6 @@ public abstract class Action {
    */
   public abstract boolean execute() throws GCloudExecutionException, IOException;
 
-  @VisibleForTesting
-  public ProcessCaller getProcessCaller() {
-    return processCaller;
-  }
-
   /**
    * Sets a new Cloud SDK location.
    *
@@ -60,13 +50,8 @@ public abstract class Action {
    * exist or gcloud or dev_appserver.py can not be found.
    */
   public void setCloudSdkLocation(String cloudSdkLocation) {
-    this.processCaller.setCloudSdkPath(cloudSdkLocation);
+    this.processCallerFactory.setCloudSdkPath(cloudSdkLocation);
   }
-
-//  @VisibleForTesting
-//  public void setProcessCaller(ProcessCaller processCaller) {
-//    this.processCaller = processCaller;
-//  }
 
   @VisibleForTesting
   public void setProcessCallerFactory(ProcessCallerFactory processCallerFactory) {
