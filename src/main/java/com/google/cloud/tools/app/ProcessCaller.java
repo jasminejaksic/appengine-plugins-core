@@ -45,15 +45,6 @@ public class ProcessCaller {
   private final boolean synchronous;
   private static Path cloudSdkPath;
 
-  private ProcessCaller(Tool tool, Collection<String> arguments, Path cloudSdkPath) {
-    this(tool, arguments, DEFAULT_WORKING_DIR, true, cloudSdkPath);
-  }
-
-  private ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory,
-      Path cloudSdkPath) {
-    this(tool, arguments, workingDirectory, true, cloudSdkPath);
-  }
-
   private ProcessCaller(Tool tool, Collection<String> arguments, boolean synchronous,
       Path cloudSdkPath) {
     this(tool, arguments, DEFAULT_WORKING_DIR, synchronous, cloudSdkPath);
