@@ -16,14 +16,14 @@
 package com.google.cloud.tools.app.config.impl;
 
 import com.google.cloud.tools.app.config.StageGenericJavaConfiguration;
+import com.google.common.base.Preconditions;
 
 import java.nio.file.Path;
 
 import javax.annotation.Nullable;
 
 /**
- * Default implementation for
- * {@link com.google.cloud.tools.app.config.StageGenericJavaConfiguration}.
+ * Default implementation of {@link StageGenericJavaConfiguration}.
  */
 public class DefaultStageGenericJavaConfigurationImpl implements StageGenericJavaConfiguration {
 
@@ -62,7 +62,10 @@ public class DefaultStageGenericJavaConfigurationImpl implements StageGenericJav
     private Path artifact;
     private Path stagingDirectory;
 
-    public Builder newConfiguration(Path artifact, Path stagingDirectory) {
+    public Builder newBuilder(Path artifact, Path stagingDirectory) {
+      Preconditions.checkNotNull(artifact);
+      Preconditions.checkNotNull(stagingDirectory);
+
       this.artifact = artifact;
       this.stagingDirectory = stagingDirectory;
       return this;
