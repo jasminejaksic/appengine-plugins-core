@@ -25,14 +25,14 @@ import javax.annotation.Nullable;
 /**
  * Default implementation of {@link StageGenericJavaConfiguration}.
  */
-public class DefaultStageGenericJavaConfigurationImpl implements StageGenericJavaConfiguration {
+public class DefaultStageGenericJavaConfiguration implements StageGenericJavaConfiguration {
 
   private final Path appYaml;
   private final Path dockerfile;
   private final Path artifact;
   private final Path stagingDirectory;
 
-  public DefaultStageGenericJavaConfigurationImpl(@Nullable Path appYaml, @Nullable Path dockerfile,
+  public DefaultStageGenericJavaConfiguration(@Nullable Path appYaml, @Nullable Path dockerfile,
       Path artifact, Path stagingDirectory) {
     this.appYaml = appYaml;
     this.dockerfile = dockerfile;
@@ -82,7 +82,7 @@ public class DefaultStageGenericJavaConfigurationImpl implements StageGenericJav
     }
 
     public StageGenericJavaConfiguration build() {
-      return new DefaultStageGenericJavaConfigurationImpl(appYaml, dockerfile, artifact,
+      return new DefaultStageGenericJavaConfiguration(appYaml, dockerfile, artifact,
           stagingDirectory);
     }
   }
