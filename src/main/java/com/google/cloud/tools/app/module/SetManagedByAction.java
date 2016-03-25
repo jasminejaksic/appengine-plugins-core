@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.SetManagedByConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Sets a specific instance or every instance of a module to managed by Google or Self.
  */
-public class SetManagedByAction extends Action {
+public class SetManagedByAction extends AppAction {
 
   private SetManagedByConfiguration configuration;
 

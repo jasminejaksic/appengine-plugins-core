@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Deploys an app to the server.
  */
-public class DeployAction extends Action {
+public class DeployAction extends AppAction {
 
   private DeployConfiguration configuration;
 

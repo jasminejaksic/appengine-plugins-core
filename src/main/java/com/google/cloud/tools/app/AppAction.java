@@ -21,21 +21,20 @@ import com.google.common.annotations.VisibleForTesting;
 import java.io.IOException;
 
 /**
- * Contains common members and methods to all {@link Action} implementations.
+ * Contains common members and methods to all {@link AppAction} implementations.
  */
-// TODO(joaomartins): Come up with a better name for this. Action too overloaded.
-public abstract class Action {
+public abstract class AppAction {
 
   /**
    * ProcessCaller factory.
    */
-  ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
+  protected ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
 
   /**
-   * Executes the logic implemented by this {@link Action}.
+   * Executes the logic implemented by this {@link AppAction}.
    *
    * <p>For most actions, this is simply calling gcloud for the command that was supplied in the
-   * {@link Action} constructor.
+   * {@link AppAction} constructor.
    *
    * @return {@code true} if execution was successful, {@code false} if it was unsuccessful but no
    * exception was thrown.

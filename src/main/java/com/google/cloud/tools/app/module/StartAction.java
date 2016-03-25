@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.StartConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Starts serving a specific version in one or more modules.
  */
-public class StartAction extends Action {
+public class StartAction extends AppAction {
 
   private StartConfiguration configuration;
 

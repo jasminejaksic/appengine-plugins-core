@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Stages a Java JAR/WAR Managed VMs application to be deployed.
  */
-public class StageGenericJavaAction extends Action {
+public class StageGenericJavaAction extends AppAction {
 
   private static Logger logger = Logger.getLogger(StageGenericJavaAction.class.getName());
   private StageGenericJavaConfiguration configuration;

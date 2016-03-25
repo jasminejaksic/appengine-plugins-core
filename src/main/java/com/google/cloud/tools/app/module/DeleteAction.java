@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.DeleteConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Deletes a version of one or more modules.
  */
-public class DeleteAction extends Action {
+public class DeleteAction extends AppAction {
 
   private DeleteConfiguration configuration;
 

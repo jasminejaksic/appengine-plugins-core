@@ -16,7 +16,7 @@
 package com.google.cloud.tools.app.module;
 
 import com.google.appengine.repackaged.com.google.api.client.util.Strings;
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.ListConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Lists the versions for a module, or every version of every module if no module is specified.
  */
-public class ListAction extends Action {
+public class ListAction extends AppAction {
 
   private ListConfiguration configuration;
 

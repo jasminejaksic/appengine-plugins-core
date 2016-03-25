@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Starts the local development server, synchronous or asynchronously.
  */
-public class RunAction extends Action {
+public class RunAction extends AppAction {
 
   private RunConfiguration configuration;
 

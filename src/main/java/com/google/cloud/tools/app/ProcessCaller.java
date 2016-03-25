@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 
 /**
  * Calls external tools like gcloud or dev_appserver. Hides system process invocation logic from
- * {@link Action}.
+ * {@link AppAction}.
  *
  * <p>All the logic for generating and running commands is contained in this class.
  */
@@ -118,7 +118,7 @@ public class ProcessCaller {
   }
 
   /**
-   * Prepares the gcloud command ran by the {@link Action}.
+   * Prepares the gcloud command ran by the {@link AppAction}.
    */
   private List<String> prepareCommand(Tool tool, Collection<String> arguments) {
     List<String> command = new ArrayList<>();

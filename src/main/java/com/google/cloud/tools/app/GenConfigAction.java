@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Generates missing configuration files.
  */
-public class GenConfigAction extends Action {
+public class GenConfigAction extends AppAction {
 
   private static Logger logger = Logger.getLogger(GenConfigAction.class.getName());
   private GenConfigConfiguration configuration;

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 /**
  * Stops the local development server.
  */
-public class StopAction extends Action {
+public class StopAction extends AppAction {
 
   private static Logger logger = Logger.getLogger(StopAction.class.getName());
   private static final String DEFAULT_ADMIN_HOST = "localhost";

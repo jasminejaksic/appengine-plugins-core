@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Stages an application to be deployed.
  */
-public class StageAction extends Action {
+public class StageAction extends AppAction {
 
   private StageConfiguration configuration;
 

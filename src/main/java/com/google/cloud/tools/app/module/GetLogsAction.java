@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.GetLogsConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Gets the logs for a version of a module.
  */
-public class GetLogsAction extends Action {
+public class GetLogsAction extends AppAction {
 
   private GetLogsConfiguration configuration;
 

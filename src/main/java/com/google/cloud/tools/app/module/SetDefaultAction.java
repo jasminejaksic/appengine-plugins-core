@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.SetDefaultConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Sets the default version of a module.
  */
-public class SetDefaultAction extends Action {
+public class SetDefaultAction extends AppAction {
 
   private SetDefaultConfiguration configuration;
 

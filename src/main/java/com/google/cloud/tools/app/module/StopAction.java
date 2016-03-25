@@ -15,7 +15,7 @@
  */
 package com.google.cloud.tools.app.module;
 
-import com.google.cloud.tools.app.Action;
+import com.google.cloud.tools.app.AppAction;
 import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.StopConfiguration;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Stops serving a specific version of a module.
  */
-public class StopAction extends Action {
+public class StopAction extends AppAction {
 
   private StopConfiguration configuration;
 

@@ -17,6 +17,7 @@ package com.google.cloud.tools.app.config.impl;
 
 import com.google.cloud.tools.app.config.DeployConfiguration;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -86,11 +87,10 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     return version;
   }
 
-  public static Builder newBuilder(Collection<Path> deployables) {
-    Preconditions.checkNotNull(deployables);
-    Preconditions.checkArgument(deployables.size() > 0);
+  public static Builder newBuilder(Path... deployables) {
+    Preconditions.checkArgument(deployables.length > 0);
 
-    return new Builder(deployables);
+    return new Builder(ImmutableList.copyOf(deployables));
   }
 
   private static class Builder {
