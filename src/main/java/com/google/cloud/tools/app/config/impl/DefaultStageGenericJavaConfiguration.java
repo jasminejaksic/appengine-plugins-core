@@ -32,7 +32,7 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
   private final Path artifact;
   private final Path stagingDirectory;
 
-  public DefaultStageGenericJavaConfiguration(@Nullable Path appYaml, @Nullable Path dockerfile,
+  private DefaultStageGenericJavaConfiguration(@Nullable Path appYaml, @Nullable Path dockerfile,
       Path artifact, Path stagingDirectory) {
     this.appYaml = appYaml;
     this.dockerfile = dockerfile;
@@ -56,19 +56,22 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
     return stagingDirectory;
   }
 
-  public static class Builder {
+  public Builder newBuilder() {
+    Preconditions.checkNotNull(artifact);
+    Preconditions.checkNotNull(stagingDirectory);
+
+    return new Builder(artifact, stagingDirectory);
+  }
+
+  private static class Builder {
     private Path appYaml;
     private Path dockerfile;
     private Path artifact;
     private Path stagingDirectory;
 
-    public Builder newBuilder(Path artifact, Path stagingDirectory) {
-      Preconditions.checkNotNull(artifact);
-      Preconditions.checkNotNull(stagingDirectory);
-
+    private Builder(Path artifact, Path stagingDirectory) {
       this.artifact = artifact;
       this.stagingDirectory = stagingDirectory;
-      return this;
     }
 
     public Builder appYaml(Path appYaml) {
