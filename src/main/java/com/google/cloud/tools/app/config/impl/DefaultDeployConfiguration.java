@@ -87,6 +87,9 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   }
 
   public static Builder newBuilder(Collection<Path> deployables) {
+    Preconditions.checkNotNull(deployables);
+    Preconditions.checkArgument(deployables.size() > 0);
+
     return new Builder(deployables);
   }
 
@@ -101,10 +104,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     private Boolean stopPreviousVersion;
     private String version;
 
-    public Builder(Collection<Path> deployables) {
-      Preconditions.checkNotNull(deployables);
-      Preconditions.checkArgument(deployables.size() > 0);
-
+    private Builder(Collection<Path> deployables) {
       this.deployables = deployables;
     }
 
