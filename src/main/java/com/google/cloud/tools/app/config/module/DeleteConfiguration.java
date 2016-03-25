@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.tools.app;
+package com.google.cloud.tools.app.config.module;
+
+import java.util.Collection;
 
 /**
- * Signals an invalid directory.
+ * Configuration for {@link com.google.cloud.tools.app.module.DeleteAction}.
  */
-public class InvalidDirectoryException extends RuntimeException {
-  public InvalidDirectoryException(String message) {
-    super(message);
-  }
+public interface DeleteConfiguration {
+
+  Collection<String> getModules();
+
+  String getVersion();
+
+  String getServer();
 }

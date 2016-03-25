@@ -23,14 +23,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.InvalidFlagException;
-import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
 import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,14 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Unit tests for {@link GetLogsAction}.

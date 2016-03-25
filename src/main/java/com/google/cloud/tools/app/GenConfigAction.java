@@ -16,40 +16,57 @@
 package com.google.cloud.tools.app;
 
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.GenConfigConfiguration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Generates missing configuration files.
  */
 public class GenConfigAction extends Action {
 
-  private static Set<Option> acceptedFlags = ImmutableSet.of(
-      Option.CONFIG,
-      Option.CUSTOM,
-      Option.RUNTIME
-  );
+  private static Logger logger = Logger.getLogger(GenConfigAction.class.getName());
+  private GenConfigConfiguration configuration;
 
-  public GenConfigAction(String sourceDirectory, Map<Option, String> flags) {
-    super(flags);
-    Preconditions.checkNotNull(sourceDirectory);
-    checkFlags(flags, acceptedFlags);
+  public GenConfigAction(GenConfigConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+
+    this.configuration = configuration;
+  }
+
+  public boolean execute() throws GCloudExecutionException, IOException {
+    if (!configuration.getSourceDirectory().exists()) {
+      logger.severe("Source directory does not exist. Location: "
+          + configuration.getSourceDirectory().getAbsolutePath());
+    }
+    if (!configuration.getSourceDirectory().isDirectory()) {
+      logger.severe("Source location is not a directory. Location: "
+          + configuration.getSourceDirectory().getAbsolutePath());
+    }
 
     List<String> arguments = new ArrayList<>();
     arguments.add("gen-config");
-    if (!Strings.isNullOrEmpty(sourceDirectory)) {
-      arguments.add(sourceDirectory);
+
+    if (configuration.getSourceDirectory() != null) {
+      arguments.add(configuration.getSourceDirectory().getAbsolutePath());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getConfig())) {
+      arguments.add("--config");
+      arguments.add(configuration.getConfig());
+    }
+    if (configuration.isCustom()) {
+      arguments.add("--custom");
+    }
+    if (!Strings.isNullOrEmpty(configuration.getRuntime())) {
+      arguments.add("--runtime");
+      arguments.add(configuration.getRuntime());
     }
 
-    this.processCaller = new ProcessCaller(
-        Tool.GCLOUD,
-        arguments,
-        flags);
+    return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
   }
 }

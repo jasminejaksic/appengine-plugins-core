@@ -47,7 +47,7 @@ public class DeployActionTest {
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(callerMock.getGCloudPath()).thenReturn("here");
     when(callerMock.call()).thenReturn(true);
   }
 
@@ -55,7 +55,7 @@ public class DeployActionTest {
   public void testPrepareCommand_noFlags() {
     DeployAction action = new DeployAction(".", NO_FLAGS);
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "deploy", "./app.yaml", "--quiet");
     Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
     assertEquals(expected, actual);
@@ -73,7 +73,7 @@ public class DeployActionTest {
     flags.put(Option.VERSION, "v1");
 
     DeployAction action = new DeployAction(".", flags);
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "deploy", "./app.yaml", "--bucket", "bucket", "--docker-build", "docker",
         "--force", "true", "--image-url", "image url", "--promote", "true", "--server",
         "server.com", "--version", "v1", "--quiet");

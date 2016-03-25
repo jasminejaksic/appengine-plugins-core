@@ -15,47 +15,42 @@
  */
 package com.google.cloud.tools.app.module;
 
+import com.google.appengine.repackaged.com.google.api.client.util.Strings;
 import com.google.cloud.tools.app.Action;
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.Option;
-import com.google.cloud.tools.app.ProcessCaller;
-import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
 import com.google.cloud.tools.app.config.module.ListConfiguration;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Preconditions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Lists the versions for a module, or every version of every module if no module is specified.
  */
 public class ListAction extends Action {
 
-  private ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
   private ListConfiguration configuration;
 
   public ListAction(ListConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getModules());
+
     this.configuration = configuration;
   }
 
   @Override
-  public boolean execute() throws GCloudExecutionException {
+  public boolean execute() throws GCloudExecutionException, IOException {
     List<String> arguments = new ArrayList<>();
     arguments.add("modules");
     arguments.add("list");
     arguments.addAll(configuration.getModules());
+    if (!Strings.isNullOrEmpty(configuration.getServer())) {
+      arguments.add("--server");
+      arguments.add(configuration.getServer());
+    }
 
-    return processCallerFactory.newProcessCaller(
-        Tool.GCLOUD, arguments, configuration.getOptionalParameters()).call();
-  }
-
-  @VisibleForTesting
-  public void setProcessCallerFactory(ProcessCallerFactory processCallerFactory) {
-    this.processCallerFactory = processCallerFactory;
+    return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
   }
 }

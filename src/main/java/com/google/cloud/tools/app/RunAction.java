@@ -16,61 +16,118 @@
 package com.google.cloud.tools.app;
 
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.RunConfiguration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Starts the local development server, synchronous or asynchronously.
  */
 public class RunAction extends Action {
 
-  // Only contains common, jvm, Python, VM and misc flags for now. No PHP, AppIdentity, Blobstore,
-  // etc.
-  // TODO(joaomartins): Evaluate if some of these flags can be reused from other existing ones.
-  private static Set<Option> acceptedFlags = ImmutableSet.of(
-      Option.HOST,
-      Option.PORT,
-      Option.ADMIN_HOST,
-      Option.ADMIN_PORT,
-      Option.AUTH_DOMAIN,
-      Option.STORAGE_PATH,
-      Option.LOG_LEVEL,
-      Option.MAX_MODULE_INSTANCES,
-      Option.USE_MTIME_FILE_WATCHER,
-      Option.THREADSAFE_OVERRIDE,
-      Option.PYTHON_STARTUP_SCRIPT,
-      Option.PYTHON_STARTUP_ARGS,
-      Option.JVM_FLAG,
-      Option.CUSTOM_ENTRYPOINT,
-      Option.RUNTIME,
-      Option.ALLOW_SKIPPED_FILES,
-      Option.API_PORT,
-      Option.AUTOMATIC_RESTART,
-      Option.DEV_APPSERVER_LOG_LEVEL,
-      Option.SKIP_SDK_UPDATE_CHECK,
-      Option.DEFAULT_GCS_BUCKET_NAME
-  );
+  private RunConfiguration configuration;
 
-  public RunAction(String appYaml, boolean synchronous, Map<Option, String> flags) {
-    super(flags);
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(appYaml));
-    checkFlags(flags, acceptedFlags);
+  public RunAction(RunConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getAppYamls());
+    Preconditions.checkArgument(configuration.getAppYamls().size() > 0);
 
-    List<String> arguments = new ArrayList<>();
-    arguments.add(appYaml);
-    // TODO(joaomartins): Run with more modules.
-
-    this.processCaller = new ProcessCaller(
-        Tool.DEV_APPSERVER,
-        arguments,
-        flags,
-        synchronous);
+    this.configuration = configuration;
   }
 
+  public boolean execute() throws GCloudExecutionException, IOException {
+    List<String> arguments = new ArrayList<>();
+    for (Path appYaml : configuration.getAppYamls()) {
+      arguments.add(appYaml.toString());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getHost())) {
+      arguments.add("--host");
+      arguments.add(configuration.getHost());
+    }
+    if (configuration.getPort() != null) {
+      arguments.add("--port");
+      arguments.add(String.valueOf(configuration.getPort()));
+    }
+    if (!Strings.isNullOrEmpty(configuration.getAdminHost())) {
+      arguments.add("--admin_host");
+      arguments.add(configuration.getAdminHost());
+    }
+    if (configuration.getAdminPort() != null) {
+      arguments.add("--admin_port");
+      arguments.add(String.valueOf(configuration.getAdminPort()));
+    }
+    if (!Strings.isNullOrEmpty(configuration.getAuthDomain())) {
+      arguments.add("--auth_domain");
+      arguments.add(configuration.getAuthDomain());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getStoragePath())) {
+      arguments.add("--storage_path");
+      arguments.add(configuration.getStoragePath());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getLogLevel())) {
+      arguments.add("--log_level");
+      arguments.add(configuration.getLogLevel());
+    }
+    if (configuration.getMaxModuleInstances() != null) {
+      arguments.add("--max_module_instances");
+      arguments.add(String.valueOf(configuration.getMaxModuleInstances()));
+    }
+    if (configuration.isUseMtimeFileWatcher()) {
+      arguments.add("--use_mtime_file_watcher");
+    }
+    if (configuration.isThreadsafeOverride()) {
+      arguments.add("--threadsafe_override");
+    }
+    if (!Strings.isNullOrEmpty(configuration.getPythonStartupScript())) {
+      arguments.add("--python_startup_script");
+      arguments.add(configuration.getPythonStartupScript());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getPythonStartupArgs())) {
+      arguments.add("--python_startup_args");
+      arguments.add(configuration.getPythonStartupArgs());
+    }
+    if (configuration.getJvmFlags() != null) {
+      for (String jvmFlag : configuration.getJvmFlags()) {
+        arguments.add("--jvm_flag");
+        arguments.add(jvmFlag);
+      }
+    }
+    if (!Strings.isNullOrEmpty(configuration.getCustomEntrypoint())) {
+      arguments.add("--custom_entrypoint");
+      arguments.add(configuration.getCustomEntrypoint());
+    }
+    if (!Strings.isNullOrEmpty(configuration.getRuntime())) {
+      arguments.add("--runtime");
+      arguments.add(configuration.getRuntime());
+    }
+    if (configuration.isAllowSkippedFiles()) {
+      arguments.add("--allow_skipped_files");
+    }
+    if (configuration.getApiPort() != null) {
+      arguments.add("--api_port");
+      arguments.add(String.valueOf(configuration.getApiPort()));
+    }
+    if (configuration.isAutomaticRestart()) {
+      arguments.add("--automatic_restart");
+    }
+    if (!Strings.isNullOrEmpty(configuration.getDevAppserverLogLevel())) {
+      arguments.add("--dev_appserver_log_level");
+      arguments.add(configuration.getDevAppserverLogLevel());
+    }
+    if (configuration.isSkipSdkUpdateCheck()) {
+      arguments.add("--skip_sdk_update_check");
+    }
+    if (!Strings.isNullOrEmpty(configuration.getDefaultGcsBucketName())) {
+      arguments.add("--default_gcs_bucket_name");
+      arguments.add(configuration.getDefaultGcsBucketName());
+    }
+
+    return processCallerFactory.newProcessCaller(Tool.DEV_APPSERVER, arguments,
+        configuration.isSynchronous()).call();
+  }
 }

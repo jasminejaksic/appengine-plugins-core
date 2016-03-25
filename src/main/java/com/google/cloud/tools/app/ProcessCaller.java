@@ -18,15 +18,15 @@ package com.google.cloud.tools.app;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 /**
@@ -38,43 +38,37 @@ import java.util.logging.Logger;
 public class ProcessCaller {
 
   // TODO(joaomartins): Will this work in e.g., Windows?
-  private static File DEFAULT_WORKING_DIR = new File("/");
-  private static Logger LOG = Logger.getLogger(ProcessCaller.class.getName());
+  private static final Path DEFAULT_WORKING_DIR = Paths.get(".");
+  private static Logger logger = Logger.getLogger(ProcessCaller.class.getName());
   private List<String> command;
-  private File workingDirectory;
-  private boolean synchronous;
-  private String cloudSdkLocation = System.getProperty("user.home") + "/google-cloud-sdk";
+  private final Path workingDirectory;
+  private final boolean synchronous;
+  private static Path cloudSdkPath = Paths.get(System.getProperty("user.home"), "google-cloud-sdk");
 
-  private ProcessCaller(Tool tool, Collection<String> arguments) {
-    this(tool, arguments, ImmutableMap.<Option, String>of());
+  public ProcessCaller(Tool tool, Collection<String> arguments) {
+    this(tool, arguments, DEFAULT_WORKING_DIR, true);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags) {
-    this(tool, arguments, flags, DEFAULT_WORKING_DIR, true);
+  public ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory) {
+    this(tool, arguments, workingDirectory, true);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
-      File workingDirectory) {
-    this(tool, arguments, flags, workingDirectory, true);
+  public ProcessCaller(Tool tool, Collection<String> arguments, boolean synchronous) {
+    this(tool, arguments, DEFAULT_WORKING_DIR, synchronous);
   }
 
-  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
+  public ProcessCaller(Tool tool, Collection<String> arguments, Path workingDirectory,
       boolean synchronous) {
-    this(tool, arguments, flags, DEFAULT_WORKING_DIR, synchronous);
-  }
-
-  public ProcessCaller(Tool tool, Collection<String> arguments, Map<Option, String> flags,
-      File workingDirectory, boolean synchronous) {
     this.workingDirectory = workingDirectory;
     this.synchronous = synchronous;
-    this.command = prepareCommand(tool, arguments, flags);
+    this.command = prepareCommand(tool, arguments);
   }
 
-  public boolean call() throws GCloudExecutionException {
-    LOG.info("Calling " + Joiner.on(" ").join(command));
+  public boolean call() throws GCloudExecutionException, IOException {
+    logger.info("Calling " + Joiner.on(" ").join(command));
 
     ProcessBuilder processBuilder = new ProcessBuilder(command);
-    processBuilder.directory(workingDirectory);
+    processBuilder.directory(workingDirectory.toFile());
     processBuilder.inheritIO();
     try {
       Process gcloudProcess = processBuilder.start();
@@ -87,8 +81,8 @@ public class ProcessCaller {
           throw new GCloudExecutionException(exitStatus);
         }
       }
-    } catch (IOException|InterruptedException ex) {
-      LOG.severe("Error running gcloud CLI. " + ex);
+    } catch (InterruptedException ex) {
+      logger.severe("Error running gcloud CLI. " + ex);
       return false;
     }
 
@@ -99,77 +93,86 @@ public class ProcessCaller {
    * Finds the executable path for gcloud.
    */
   @VisibleForTesting
-  public String getGcloudPath() {
-    String gcloudLocation = cloudSdkLocation + "/bin/gcloud";
-    if (!new File(gcloudLocation).exists()) {
+  static Path getGCloudPath() {
+    Path gcloudPath = Paths.get(cloudSdkPath.toString(), "bin", "gcloud");
+    if (Files.notExists(gcloudPath)) {
       throw new RuntimeException("Could not locate gcloud from Cloud SDK directory \""
-          + cloudSdkLocation + "/bin\". Please provide the correct Cloud SDK root directory.");
+          + Paths.get(cloudSdkPath.toString(), "bin") + "\". Please provide the correct "
+          + "Cloud SDK root directory.");
     }
 
-    return gcloudLocation;
+    return gcloudPath;
   }
 
   /**
    * Finds the executable path for dev_appserver.py.
    */
-  protected String getDevAppserverPath() {
-    String devAppserverLocation = cloudSdkLocation + "/bin/dev_appserver.py";
-    if (!new File(devAppserverLocation).exists()) {
+  static Path getDevAppserverPath() {
+    Path devAppserverPath = Paths.get(cloudSdkPath.toString(), "bin", "dev_appserver.py");
+    if (Files.notExists(devAppserverPath)) {
       throw new RuntimeException("Could not locate dev_appserver from Cloud SDK directory \""
-          + cloudSdkLocation + "/bin\". Please provide the correct Cloud SDK root directory.");
+          + Paths.get(cloudSdkPath.toString(), "bin") + "\". Please provide the correct Cloud " +
+          "SDK root directory.");
     }
 
-    return devAppserverLocation;
+    return devAppserverPath;
   }
 
   @VisibleForTesting
-  public List<String> getCommand() {
+  List<String> getCommand() {
     return command;
   }
 
   /**
    * Prepares the gcloud command ran by the {@link Action}.
-   *
-   * <p>Obsoleted when gcloud CLI is no longer a dependency.
    */
-  protected List<String> prepareCommand(Tool tool, Collection<String> arguments,
-      Map<Option, String> flags) {
+  private List<String> prepareCommand(Tool tool, Collection<String> arguments) {
     List<String> command = new ArrayList<>();
 
-    if (tool.equals(Tool.DEV_APPSERVER)) {
-      command.add(getDevAppserverPath());
-    } else {
-      command.add(getGcloudPath());
-      command.add("preview");
-      command.add("app");
-    }
+    command.addAll(tool.getInitialCommand());
 
-    // Command. e.g. "deploy" or "modules list".
+    // Command and flags. e.g. "deploy --version=v1" or "modules list".
     command.addAll(arguments);
-
-    // Flags passed by the client.
-    for (Entry<Option, String> flag : flags.entrySet()) {
-      command.add(flag.getKey().getLongForm());
-      command.add(flag.getValue());
-    }
 
     return command;
   }
 
-  public void setCloudSdkOverride(String cloudSdkOverride) {
-    if (!Strings.isNullOrEmpty(cloudSdkOverride)) {
-      File cloudSdkDir =  new File(cloudSdkOverride);
-      if (!cloudSdkDir.exists() || !cloudSdkDir.isDirectory()) {
-        throw new InvalidDirectoryException("Invalid Cloud SDK directory provided.");
+  public void setCloudSdkPath(String cloudSdkLocation) {
+    if (!Strings.isNullOrEmpty(cloudSdkLocation)) {
+      Path cloudSdkPath = Paths.get(cloudSdkLocation);
+      if (Files.notExists(cloudSdkPath)) {
+        throw new IllegalArgumentException("Provided Cloud SDK path does not exist.");
+      }
+      if (!Files.isDirectory(cloudSdkPath)) {
+        throw new IllegalArgumentException("Provided Cloud SDK path is not a directory.");
+      }
+      Path gcloudPath = Paths.get(cloudSdkLocation, "bin", "gcloud");
+      Path devAppserverPath = Paths.get(cloudSdkLocation, "bin", "dev_appserver.py");
+      if (Files.notExists(gcloudPath)) {
+        throw new IllegalArgumentException("gcloud can not be found at " + gcloudPath.toString());
+      }
+      if (Files.notExists(devAppserverPath)) {
+        throw new IllegalArgumentException(
+            "dev_appserver.py can not be found at " + devAppserverPath.toString());
       }
 
-      cloudSdkLocation = cloudSdkOverride;
+      this.cloudSdkPath = cloudSdkPath;
     }
   }
 
   public enum Tool {
-    GCLOUD,
-    DEV_APPSERVER
+    GCLOUD(getGCloudPath().toString(), "preview", "app"),
+    DEV_APPSERVER(getDevAppserverPath().toString());
+
+    private Collection<String> initialCommand = new ArrayList<>();
+
+    Tool(String... commandTokens) {
+      Collections.addAll(initialCommand, commandTokens);
+    }
+
+    public Collection<String> getInitialCommand() {
+      return initialCommand;
+    }
   }
 
   public static ProcessCallerFactory getFactory() {
@@ -182,8 +185,8 @@ public class ProcessCaller {
     }
 
     public ProcessCaller newProcessCaller(Tool tool, Collection<String> arguments,
-        Map<Option, String> optionalParameters) {
-      return new ProcessCaller(tool, arguments, optionalParameters);
+        Boolean synchronous) {
+      return new ProcessCaller(tool, arguments, synchronous);
     }
   }
 }

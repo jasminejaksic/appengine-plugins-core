@@ -16,71 +16,42 @@
 package com.google.cloud.tools.app;
 
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.DeployConfiguration;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Deploys an app to the server.
  */
 public class DeployAction extends Action {
 
-  private static Set<Option> acceptedFlags = ImmutableSet.of(
-      Option.BUCKET,
-      Option.DOCKER_BUILD,
-      Option.FORCE,
-      Option.IMAGE_URL,
-      Option.PROMOTE,
-      Option.SERVER,
-      Option.VERSION
-  );
-  private File stagedDirectory;
+  private DeployConfiguration configuration;
 
-  /**
-   * Initialises all the necessary properties to deploy an application.
-   *
-   * @param stagedDirectoryLocation directory where staged application is located
-   * @param flags deployment flags
-   */
-  public DeployAction(String stagedDirectoryLocation, Map<Option, String> flags) {
-    super(flags);
-    Preconditions.checkNotNull(stagedDirectoryLocation);
-    checkFlags(flags, acceptedFlags);
+  public DeployAction(DeployConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getDeployables());
+    Preconditions.checkArgument(configuration.getDeployables().size() > 0);
 
-    stagedDirectory = new File(stagedDirectoryLocation);
-
-    // Set process caller.
-    List<String> arguments = new ArrayList<>();
-    arguments.add("deploy");
-    arguments.add(stagedDirectoryLocation + "/app.yaml");
-    arguments.add("--quiet");
-
-    this.processCaller = new ProcessCaller(
-        Tool.GCLOUD,
-        arguments,
-        flags,
-        stagedDirectory
-    );
+    this.configuration = configuration;
   }
 
-  @Override
   public boolean execute() throws GCloudExecutionException, IOException {
-    if (!stagedDirectory.exists()) {
-      throw new InvalidDirectoryException(
-          "Staging directory does not exist. " + stagedDirectory.getAbsolutePath());
+    List<String> arguments = new ArrayList<>();
+    arguments.add("deploy");
+    for (Path deployable : configuration.getDeployables()) {
+      if (!Files.exists(deployable)) {
+        throw new IllegalArgumentException(
+            "Deployable " + deployable.toString() + " does not exist.");
+      }
+      arguments.add(deployable.toString());
     }
+    arguments.add("--quiet");
 
-    if (!stagedDirectory.isDirectory()) {
-      throw new InvalidDirectoryException(
-          "Staging directory is not a directory. " + stagedDirectory.getAbsolutePath());
-    }
-
-    return processCaller.call();
+    return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
   }
 }

@@ -17,16 +17,13 @@ package com.google.cloud.tools.app.module;
 
 import com.google.cloud.tools.app.Action;
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.ProcessCaller;
-import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
-import com.google.common.annotations.VisibleForTesting;
+import com.google.cloud.tools.app.config.module.DeleteConfiguration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,46 +31,31 @@ import java.util.List;
  */
 public class DeleteAction extends Action {
 
-  private ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
-  private Collection<String> modules = UNSET_COLLECTION;
-  private String version = UNSET_STRING;
-  private String server = UNSET_STRING;
+  private DeleteConfiguration configuration;
 
-  private DeleteAction(Collection<String> modules, String version) {
-    this.modules = modules;
-    this.version = version;
-  }
+  public DeleteAction(DeleteConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getModules());
+    Preconditions.checkArgument(configuration.getModules().size() > 0);
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(configuration.getVersion()));
 
-  public static DeleteAction newDeleteAction(String version, String... modules) {
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(version));
-    Preconditions.checkArgument(modules.length > 0);
-    return new DeleteAction(ImmutableList.copyOf(modules), version);
-  }
-
-  public DeleteAction setServer(String server) {
-    this.server = server;
-    return this;
+    this.configuration = configuration;
   }
 
   @Override
-  public boolean execute() throws GCloudExecutionException {
+  public boolean execute() throws GCloudExecutionException, IOException {
     List<String> arguments = new ArrayList<>();
     arguments.add("modules");
     arguments.add("delete");
-    arguments.addAll(modules);
+    arguments.addAll(configuration.getModules());
     arguments.add("--version");
-    arguments.add(version);
-    if (!Strings.isNullOrEmpty(server)) {
-      arguments.add("--server");
-      arguments.add(server);
-    }
+    arguments.add(configuration.getVersion());
     arguments.add("--quiet");
+    if (!Strings.isNullOrEmpty(configuration.getServer())) {
+      arguments.add("--server");
+      arguments.add(configuration.getServer());
+    }
 
     return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
-  }
-
-  @VisibleForTesting
-  public void setProcessCallerFactory(ProcessCallerFactory processCallerFactory) {
-    this.processCallerFactory = processCallerFactory;
   }
 }

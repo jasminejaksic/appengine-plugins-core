@@ -16,28 +16,17 @@
 package com.google.cloud.tools.app.module;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.InvalidFlagException;
-import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Unit tests for {@link ListAction}.
@@ -49,7 +38,7 @@ public class ListActionTest {
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(callerMock.getGCloudPath()).thenReturn("here");
     when(callerMock.call()).thenReturn(true);
   }
 
@@ -59,7 +48,7 @@ public class ListActionTest {
 //        ImmutableList.of("module1"),
 //        ImmutableMap.<Option, String>of());
 //
-//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
 //        "app", "modules", "list", "module1");
 //    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
 //    assertEquals(expected, actual);
@@ -70,7 +59,7 @@ public class ListActionTest {
 //    ListAction action = new ListAction(ImmutableList.<String>of(),
 //        ImmutableMap.of(Option.SERVER, "server.com"));
 //
-//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview", "app",
+//    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview", "app",
 //        "modules", "list", "--server", "server.com");
 //    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
 //

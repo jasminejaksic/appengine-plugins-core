@@ -16,41 +16,44 @@
 package com.google.cloud.tools.app.module;
 
 import com.google.cloud.tools.app.Action;
-import com.google.cloud.tools.app.Option;
-import com.google.cloud.tools.app.ProcessCaller;
+import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.module.StartConfiguration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Starts serving a specific version in one or more modules.
  */
 public class StartAction extends Action {
 
-  private static Set<Option> acceptedFlags = ImmutableSet.of(Option.SERVER);
+  private StartConfiguration configuration;
 
-  public StartAction(List<String> modules, String version, Map<Option, String> flags) {
-    super(flags);
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(version));
-    checkFlags(flags, acceptedFlags);
+  public StartAction(StartConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getModules());
+    Preconditions.checkArgument(configuration.getModules().size() > 0);
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(configuration.getVersion()));
 
+    this.configuration = configuration;
+  }
+
+  public boolean execute() throws GCloudExecutionException, IOException {
     List<String> arguments = new ArrayList<>();
     arguments.add("modules");
     arguments.add("start");
-    arguments.addAll(modules);
+    arguments.addAll(configuration.getModules());
     arguments.add("--version");
-    arguments.add(version);
+    arguments.add(configuration.getVersion());
+    if (!Strings.isNullOrEmpty(configuration.getServer())) {
+      arguments.add("--server");
+      arguments.add(configuration.getServer());
+    }
 
-    this.processCaller = new ProcessCaller(
-        Tool.GCLOUD,
-        arguments,
-        flags
-    );
+    return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
   }
 }

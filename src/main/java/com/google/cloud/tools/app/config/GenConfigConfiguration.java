@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.tools.app;
+package com.google.cloud.tools.app.config;
+
+import java.nio.file.Path;
 
 /**
- * Thrown when a user specifies a flag that isn't accepted by an {@link Action}, or when a flag
- * value is invalid.
+ * Configuration for {@link com.google.cloud.tools.app.GenConfigAction}.
  */
-public class InvalidFlagException extends RuntimeException {
-  public InvalidFlagException(String message) {
-    super(message);
-  }
+public interface GenConfigConfiguration {
+
+  Path getSourceDirectory();
+
+  String getConfig();
+
+  Boolean isCustom();
+
+  String getRuntime();
 }

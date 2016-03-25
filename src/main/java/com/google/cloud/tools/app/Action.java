@@ -15,17 +15,10 @@
  */
 package com.google.cloud.tools.app;
 
-import com.google.cloud.tools.app.Option.Type;
+import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * Contains common members and methods to all {@link Action} implementations.
@@ -33,25 +26,15 @@ import java.util.Set;
 // TODO(joaomartins): Come up with a better name for this. Action too overloaded.
 public abstract class Action {
 
-  protected static Map<Option, String> NO_FLAGS = ImmutableMap.of();
-  protected static String UNSET_STRING = null;
-  protected static Boolean UNSET_BOOLEAN = null;
-  protected static Collection<String> UNSET_COLLECTION = null;
   /**
-   * Flags sent by the client.
+   * ProcessCaller factory.
    */
-  protected Map<Option, String> flags;
+  protected ProcessCallerFactory processCallerFactory = ProcessCaller.getFactory();
 
   /**
    * Makes system calls to invoke processes.
    */
   protected ProcessCaller processCaller;
-
-  public Action() {}
-
-  public Action(Map<Option, String> flags) {
-    this.flags = flags;
-  }
 
   /**
    * Executes the logic implemented by this {@link Action}.
@@ -63,9 +46,7 @@ public abstract class Action {
    * exception was thrown.
    * @throws GCloudExecutionException if any error invoking or running gcloud occurred.
    */
-  public boolean execute() throws GCloudExecutionException, IOException {
-    return processCaller.call();
-  }
+  public abstract boolean execute() throws GCloudExecutionException, IOException;
 
   @VisibleForTesting
   public ProcessCaller getProcessCaller() {
@@ -73,65 +54,22 @@ public abstract class Action {
   }
 
   /**
-   * Checks if {@code flags} contains flags that are not accepted by the {@link Action} and if
-   * any flag's value is invalid.
+   * Sets a new Cloud SDK location.
    *
-   * @throws InvalidFlagException if client-provided flags contain flags not accepted by the
-   * {@link Action}.
+   * @throws IllegalArgumentException If no directory is provided, the provided directory does not
+   * exist or gcloud or dev_appserver.py can not be found.
    */
-  protected void checkFlags(Map<Option, String> clientProvidedFlags, Set<Option> acceptedFlags) {
-    for (Entry<Option, String> clientFlag : clientProvidedFlags.entrySet()) {
-      // Check for unrecognised flags.
-      if (!acceptedFlags.contains(clientFlag.getKey())) {
-        throw new InvalidFlagException(String.format(
-            "The %s flag is not recognised by the %s command.",
-            clientFlag.getKey().getLongForm(), this.getClass().getName()));
-      }
-
-      // Check for invalid values.
-      String flagValue = clientFlag.getValue();
-      if (clientFlag.getKey().getType().equals(Type.BOOLEAN)) {
-        // If boolean, either there is no value, or the value has to be "true" or "false".
-        if (!Strings.isNullOrEmpty(flagValue)) {
-          String flagValueLowerCase = flagValue.toLowerCase(Locale.ENGLISH);
-          if (!flagValueLowerCase.equals("true".toLowerCase(Locale.ENGLISH))
-              && !flagValueLowerCase.equals("false".toLowerCase(Locale.ENGLISH))) {
-            throw new InvalidFlagException(String.format(
-                "The value %s for flag %s is invalid.",
-                flagValue, clientFlag.getKey().getLongForm()));
-          }
-        }
-      } else if (clientFlag.getKey().getType().equals(Type.INTEGER)) {
-        // If integer, flag must have a value and be int parsable.
-        if (!Strings.isNullOrEmpty(flagValue)) {
-          try {
-            Integer.parseInt(flagValue);
-          } catch (NumberFormatException nfe) {
-            throw new InvalidFlagException(String.format(
-                "The value %s for flag %s is invalid.",
-                flagValue, clientFlag.getKey().getLongForm()));
-          }
-        } else {
-          throw new InvalidFlagException(
-              "Flag " + clientFlag.getKey().getLongForm() + " must have a value.");
-        }
-      }
-    }
+  public void setCloudSdkLocation(String cloudSdkLocation) {
+    this.processCaller.setCloudSdkPath(cloudSdkLocation);
   }
 
-  /**
-   * Sets a new Cloud SDK location, in case it isn't installed in the default user's home
-   * folder.
-   *
-   * @throws InvalidDirectoryException If not directory is provided, or the provided directory
-   * does not exist
-   */
-  public void setCloudSdkOverride(String cloudSdkOverride) throws InvalidDirectoryException {
-    this.processCaller.setCloudSdkOverride(cloudSdkOverride);
-  }
+//  @VisibleForTesting
+//  public void setProcessCaller(ProcessCaller processCaller) {
+//    this.processCaller = processCaller;
+//  }
 
   @VisibleForTesting
-  public void setProcessCaller(ProcessCaller processCaller) {
-    this.processCaller = processCaller;
+  public void setProcessCallerFactory(ProcessCallerFactory processCallerFactory) {
+    this.processCallerFactory = processCallerFactory;
   }
 }

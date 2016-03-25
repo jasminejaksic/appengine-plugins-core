@@ -45,7 +45,7 @@ public class GenConfigActionTest {
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(callerMock.getGCloudPath()).thenReturn("here");
     when(callerMock.call()).thenReturn(true);
   }
 
@@ -57,7 +57,7 @@ public class GenConfigActionTest {
             Option.CUSTOM, "true",
             Option.RUNTIME, "java"));
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "gen-config", "source", "--config", "app.yaml", "--custom", "true", "--runtime",
         "java");
     Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
@@ -70,7 +70,7 @@ public class GenConfigActionTest {
         "source",
         ImmutableMap.<Option, String>of());
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "gen-config", "source");
     Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
     assertEquals(expected, actual);

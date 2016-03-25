@@ -15,28 +15,30 @@
  */
 package com.google.cloud.tools.app;
 
-import com.google.common.io.Files;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-import java.io.File;
+import com.google.cloud.tools.app.config.StageGenericJavaConfiguration;
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 /**
  * Stages a Java JAR/WAR Managed VMs application to be deployed.
  */
 public class StageGenericJavaAction extends Action {
 
-  private File appYaml;
-  private File dockerfile;
-  private File artifact;
-  private File stagingDir;
+  private static Logger logger = Logger.getLogger(StageGenericJavaAction.class.getName());
+  private StageGenericJavaConfiguration configuration;
 
-  public StageGenericJavaAction(File appYaml, File dockerfile, File artifact,
-      File stagingDir) {
-    super(NO_FLAGS);
-    this.appYaml = appYaml;
-    this.dockerfile = dockerfile;
-    this.artifact = artifact;
-    this.stagingDir = stagingDir;
+  public StageGenericJavaAction(StageGenericJavaConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getStagingDirectory());
+    Preconditions.checkNotNull(configuration.getArtifact());
+
+    this.configuration = configuration;
   }
 
   /**
@@ -45,19 +47,39 @@ public class StageGenericJavaAction extends Action {
    * <p>If app.yaml or Dockerfile do not exist, gcloud deploy will create them.
    */
   public boolean execute() throws IOException {
+    if (Files.notExists(configuration.getStagingDirectory())) {
+      logger.severe("Staging directory does not exist. Location: "
+          + configuration.getStagingDirectory().toString());
+      return false;
+    }
+    if (!Files.isDirectory(configuration.getStagingDirectory())) {
+      logger.severe("Staging location is not a directory. Location: "
+          + configuration.getStagingDirectory().toString());
+      return false;
+    }
+
     // Copy app.yaml to staging.
-    if (appYaml != null && appYaml.exists()) {
-      Files.copy(appYaml, new File(stagingDir, "app.yaml"));
+    if (configuration.getAppYaml() != null && Files.exists(configuration.getAppYaml())) {
+      Files.copy(configuration.getAppYaml(),
+          Paths.get(configuration.getStagingDirectory().toString(),
+              configuration.getAppYaml().getFileName().toString()),
+          REPLACE_EXISTING);
     }
 
     // Copy Dockerfile to staging.
-    if (dockerfile != null && dockerfile.exists()) {
-      Files.copy(dockerfile, new File(stagingDir, "Dockerfile"));
+    if (configuration.getDockerfile() != null && Files.exists(configuration.getDockerfile())) {
+      Files.copy(configuration.getDockerfile(),
+          Paths.get(configuration.getStagingDirectory().toString(),
+              configuration.getDockerfile().getFileName().toString()),
+          REPLACE_EXISTING);
     }
 
     // Copy the JAR/WAR file to staging.
-    if (artifact != null && artifact.exists()) {
-      Files.copy(artifact, new File(stagingDir, artifact.getName()));
+    if (configuration.getArtifact() != null && Files.exists(configuration.getArtifact())) {
+      Files.copy(configuration.getArtifact(),
+          Paths.get(configuration.getStagingDirectory().toString(),
+              configuration.getArtifact().getFileName().toString()),
+          REPLACE_EXISTING);
     }
 
     return true;

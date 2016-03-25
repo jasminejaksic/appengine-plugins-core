@@ -46,7 +46,7 @@ public class RunActionTest {
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(callerMock.getGCloudPath()).thenReturn("here");
     when(callerMock.call()).thenReturn(true);
   }
 

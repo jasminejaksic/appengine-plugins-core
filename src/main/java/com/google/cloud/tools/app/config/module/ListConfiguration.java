@@ -15,23 +15,14 @@
  */
 package com.google.cloud.tools.app.config.module;
 
-import com.google.cloud.tools.app.Option;
-
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Configuration for {@link com.google.cloud.tools.app.module.ListAction}.
  */
 public interface ListConfiguration {
 
-  /**
-   * Returns the modules collection to add to the command.
-   */
   Collection<String> getModules();
 
-  /**
-   * Returns a map of Option, String pairs representing optional parameters.
-   */
-  Map<Option, String> getOptionalParameters();
+  String getServer();
 }

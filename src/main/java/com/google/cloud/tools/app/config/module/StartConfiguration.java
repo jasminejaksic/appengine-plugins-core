@@ -13,42 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.cloud.tools.app.config;
+package com.google.cloud.tools.app.config.module;
 
-import java.nio.file.Path;
+import java.util.Collection;
 
 /**
- * Configuration for {@link com.google.cloud.tools.app.StageAction}.
+ * Configuration for {@link com.google.cloud.tools.app.module.StartAction}.
  */
-public interface StageConfiguration {
+public interface StartConfiguration {
 
-  Path getSourceDirectory();
-
-  Path getStagingDirectory();
-
-  Path getAppEngineSdkRoot();
-
-  Boolean isEnableQuickstart();
-
-  Boolean isDisableUpdateCheck();
+  Collection<String> getModules();
 
   String getVersion();
 
-  String getCloudProject();
-
-  Boolean isEnableJarSplitting();
-
-  String getJarSplittingExcludes();
-
-  Boolean isRetainUploadDir();
-
-  String getCompileEncoding();
-
-  Boolean isForce();
-
-  Boolean isDeleteJsps();
-
-  Boolean isEnableJarClasses();
-
-  String getRuntime();
+  String getServer();
 }

@@ -16,44 +16,62 @@
 package com.google.cloud.tools.app.module;
 
 import com.google.cloud.tools.app.Action;
-import com.google.cloud.tools.app.Option;
-import com.google.cloud.tools.app.ProcessCaller;
+import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.module.SetManagedByConfiguration;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Sets a specific instance or every instance of a module to managed by Google or Self.
  */
 public class SetManagedByAction extends Action {
 
-  private static Set<Option> acceptedFlags = ImmutableSet.of(Option.INSTANCE, Option.SERVER);
+  private SetManagedByConfiguration configuration;
 
-  public SetManagedByAction(List<String> modules, String version, Option managedBy,
-      Map<Option, String> flags) {
-    super(flags);
-    Preconditions.checkArgument(!Strings.isNullOrEmpty(version));
-    Preconditions.checkNotNull(managedBy);
-    checkFlags(flags, acceptedFlags);
+  public SetManagedByAction(SetManagedByConfiguration configuration) {
+    Preconditions.checkNotNull(configuration);
+    Preconditions.checkNotNull(configuration.getModules());
+    Preconditions.checkArgument(configuration.getModules().size() > 0);
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(configuration.getVersion()));
+    Preconditions.checkNotNull(configuration.getManager());
 
+    this.configuration = configuration;
+  }
+
+  public boolean execute() throws GCloudExecutionException, IOException {
     List<String> arguments = new ArrayList<>();
+
     arguments.add("modules");
     arguments.add("set-managed-by");
-    arguments.addAll(modules);
+    arguments.addAll(configuration.getModules());
     arguments.add("--version");
-    arguments.add(version);
-    arguments.add(managedBy.getLongForm());
+    arguments.add(configuration.getVersion());
+    arguments.add(configuration.getManager().getFlagForm());
+    if (!Strings.isNullOrEmpty(configuration.getInstance())) {
+      arguments.add("--instance");
+      arguments.add(configuration.getInstance());
+    }
 
-    this.processCaller = new ProcessCaller(
-        Tool.GCLOUD,
-        arguments,
-        flags
-    );
+    return processCallerFactory.newProcessCaller(Tool.GCLOUD, arguments).call();
+  }
+
+  public enum Manager {
+    SELF("--self"),
+    GOOGLE("--google");
+
+    private String flagForm;
+
+    Manager(String flagForm) {
+      this.flagForm = flagForm;
+    }
+
+    public String getFlagForm() {
+      return flagForm;
+    }
   }
 }

@@ -18,37 +18,15 @@ package com.google.cloud.tools.app.config;
 import java.nio.file.Path;
 
 /**
- * Configuration for {@link com.google.cloud.tools.app.StageAction}.
+ * Configuration for {@link com.google.cloud.tools.app.StageGenericJavaAction}.
  */
-public interface StageConfiguration {
+public interface StageGenericJavaConfiguration {
 
-  Path getSourceDirectory();
+  Path getAppYaml();
+
+  Path getDockerfile();
+
+  Path getArtifact();
 
   Path getStagingDirectory();
-
-  Path getAppEngineSdkRoot();
-
-  Boolean isEnableQuickstart();
-
-  Boolean isDisableUpdateCheck();
-
-  String getVersion();
-
-  String getCloudProject();
-
-  Boolean isEnableJarSplitting();
-
-  String getJarSplittingExcludes();
-
-  Boolean isRetainUploadDir();
-
-  String getCompileEncoding();
-
-  Boolean isForce();
-
-  Boolean isDeleteJsps();
-
-  Boolean isEnableJarClasses();
-
-  String getRuntime();
 }

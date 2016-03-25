@@ -21,8 +21,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.cloud.tools.app.GCloudExecutionException;
-import com.google.cloud.tools.app.InvalidFlagException;
-import com.google.cloud.tools.app.Option;
 import com.google.cloud.tools.app.ProcessCaller;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -49,7 +47,7 @@ public class SetManagedByActionTest {
 
   @Before
   public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGcloudPath()).thenReturn("here");
+    when(callerMock.getGCloudPath()).thenReturn("here");
     when(callerMock.call()).thenReturn(true);
   }
 
@@ -61,7 +59,7 @@ public class SetManagedByActionTest {
         Option.SELF,
         ImmutableMap.<Option, String>of());
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "modules", "set-managed-by", "module1", "--version", "v1", "--self");
     Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
     assertEquals(expected, actual);
@@ -76,7 +74,7 @@ public class SetManagedByActionTest {
         ImmutableMap.of(Option.INSTANCE, "xkyz", Option.SERVER, "server.com")
     );
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGcloudPath(), "preview",
+    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
         "app", "modules", "set-managed-by", "--version", "v1", "--google", "--instance", "xkyz",
         "--server", "server.com");
     Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());

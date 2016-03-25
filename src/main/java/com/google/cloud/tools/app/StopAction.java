@@ -15,14 +15,13 @@
  */
 package com.google.cloud.tools.app;
 
+import com.google.cloud.tools.app.config.StopConfiguration;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -30,38 +29,24 @@ import java.util.logging.Logger;
  */
 public class StopAction extends Action {
 
-  private static String DEFAULT_ADMIN_HOST = "localhost";
-  private static int DEFAULT_ADMIN_PORT = 8000;
-  private static Logger LOG = Logger.getLogger(StopAction.class.getName());
-
-  private static Set<Option> acceptedFlags = ImmutableSet.of(
-      Option.ADMIN_PORT,
-      Option.ADMIN_HOST,
-      Option.SERVER
-  );
-
+  private static Logger logger = Logger.getLogger(StopAction.class.getName());
+  private static final String DEFAULT_ADMIN_HOST = "localhost";
+  private static final int DEFAULT_ADMIN_PORT = 8000;
   private HttpURLConnection connection;
 
-  public StopAction(Map<Option, String> flags) throws GCloudExecutionException {
-    super(flags);
-    checkFlags(flags, acceptedFlags);
+  public StopAction(StopConfiguration configuration) throws GCloudExecutionException {
+    Preconditions.checkNotNull(configuration);
 
     try {
       URL adminServerUrl = new URL(
           "http",
-          flags.containsKey(Option.ADMIN_HOST) ? flags.get(Option.ADMIN_HOST) : DEFAULT_ADMIN_HOST,
-          flags.containsKey(Option.ADMIN_PORT) ?
-              Integer.parseInt(flags.get(Option.ADMIN_PORT)) : DEFAULT_ADMIN_PORT,
+          configuration.getAdminHost() != null ? configuration.getAdminHost() : DEFAULT_ADMIN_HOST,
+          configuration.getAdminPort() != null ? configuration.getAdminPort() : DEFAULT_ADMIN_PORT,
           "/quit");
       connection = (HttpURLConnection) adminServerUrl.openConnection();
     } catch (IOException ex) {
       throw new GCloudExecutionException(ex);
     }
-  }
-
-  @VisibleForTesting
-  public void setConnection(HttpURLConnection connection) {
-    this.connection = connection;
   }
 
   /**
@@ -75,10 +60,16 @@ public class StopAction extends Action {
     connection.disconnect();
     int responseCode = connection.getResponseCode();
     if (responseCode < 200 || responseCode > 299) {
-      LOG.severe("The development server responded with " + connection.getResponseMessage() + ".");
+      logger.severe(
+          "The development server responded with " + connection.getResponseMessage() + ".");
       return false;
     }
 
     return true;
+  }
+
+  @VisibleForTesting
+  void setConnection(HttpURLConnection connection) {
+    this.connection = connection;
   }
 }
