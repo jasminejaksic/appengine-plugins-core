@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.google.cloud.tools</groupId>
-  <artifactId>gcp-java-tools-lib</artifactId>
+  <artifactId>app-tools-lib-for-java</artifactId>
   <version>0.3-SNAPSHOT</version>
 
   <name>Google Cloud Java management client library</name>
