@@ -63,7 +63,7 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
     return new Builder(artifact, stagingDirectory);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Path appYaml;
     private Path dockerfile;
     private Path artifact;

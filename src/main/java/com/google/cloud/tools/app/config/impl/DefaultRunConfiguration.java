@@ -186,7 +186,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
     return new Builder(ImmutableList.copyOf(appYamls));
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<Path> appYamls;
     private Boolean synchronous;
     private String host;

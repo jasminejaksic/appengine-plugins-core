@@ -59,7 +59,7 @@ public class DefaultGenConfigConfiguration implements GenConfigConfiguration {
     return new Builder();
   }
 
-  private static class Builder {
+  public static class Builder {
     private Path sourceDirectory;
     private String config;
     private Boolean custom;

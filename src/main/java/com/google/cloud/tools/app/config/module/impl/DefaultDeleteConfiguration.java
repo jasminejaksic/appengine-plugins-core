@@ -59,7 +59,7 @@ public class DefaultDeleteConfiguration implements DeleteConfiguration {
     return new Builder(ImmutableList.copyOf(modules), version);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<String> modules;
     private String version;
     private String server;

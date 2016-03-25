@@ -44,7 +44,7 @@ public class DefaultStopConfiguration implements StopConfiguration {
     return new Builder();
   }
 
-  private static class Builder {
+  public static class Builder {
     private String adminHost;
     private Integer adminPort;
 

@@ -73,7 +73,7 @@ public class DefaultSetManagedByConfiguration implements SetManagedByConfigurati
     return new Builder(ImmutableList.copyOf(modules), version);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<String> modules;
     private String version;
     private Manager manager;

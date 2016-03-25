@@ -16,10 +16,17 @@
 package com.google.cloud.tools.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
+import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.DeployConfiguration;
+import com.google.cloud.tools.app.config.impl.DefaultDeployConfiguration;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -30,6 +37,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,87 +52,41 @@ import java.util.Set;
 public class DeployActionTest {
 
   @Mock
+  private ProcessCallerFactory processCallerFactory;
+  @Mock
   private ProcessCaller callerMock;
-  private static Map<Option, String> NO_FLAGS = ImmutableMap.of();
 
   @Before
-  public void setUp() throws GCloudExecutionException {
-    when(callerMock.getGCloudPath()).thenReturn("here");
+  public void setUp() throws GCloudExecutionException, IOException {
     when(callerMock.call()).thenReturn(true);
+    when(processCallerFactory.newProcessCaller(eq(Tool.GCLOUD), isA(Collection.class)))
+        .thenReturn(callerMock);
   }
 
   @Test
-  public void testPrepareCommand_noFlags() {
-    DeployAction action = new DeployAction(".", NO_FLAGS);
+  public void testNewDeployAction() {
+    Path appYaml1 = Paths.get("appYaml1");
+    Path appYaml2 = Paths.get("appYaml2");
 
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
-        "app", "deploy", "./app.yaml", "--quiet");
-    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
-    assertEquals(expected, actual);
-  }
+    DeployConfiguration configuration = DefaultDeployConfiguration.newBuilder(appYaml1, appYaml2)
+        .bucket("gs://a-bucket")
+        .dockerBuild("remote")
+        .force(true)
+        .imageUrl("imageUrl")
+        .promote(false)
+        .server("appengine.google.com")
+        .stopPreviousVersion(true)
+        .version("v1")
+        .build();
 
-  @Test
-  public void testPrepareCommand_withFlags() {
-    Map<Option, String> flags = new HashMap<>();
-    flags.put(Option.BUCKET, "bucket");
-    flags.put(Option.DOCKER_BUILD, "docker");
-    flags.put(Option.FORCE, "true");
-    flags.put(Option.IMAGE_URL, "image url");
-    flags.put(Option.PROMOTE, "true");
-    flags.put(Option.SERVER, "server.com");
-    flags.put(Option.VERSION, "v1");
+    DeployAction action = new DeployAction(configuration);
+    action.setProcessCallerFactory(processCallerFactory);
 
-    DeployAction action = new DeployAction(".", flags);
-    Set<String> expected = ImmutableSet.of(action.getProcessCaller().getGCloudPath(), "preview",
-        "app", "deploy", "./app.yaml", "--bucket", "bucket", "--docker-build", "docker",
-        "--force", "true", "--image-url", "image url", "--promote", "true", "--server",
-        "server.com", "--version", "v1", "--quiet");
-    Set<String> actual = new HashSet<>(action.getProcessCaller().getCommand());
-    assertEquals(expected, actual);
-  }
+    Collection<String> expectedCommand = ImmutableList.of(ProcessCaller.getGCloudPath().toString(),
+        "preview", "app", "deploy", "appYaml1", "--bucket", "gs://a-bucket", "--docker-build",
+        "remote", "--force", "--image-url", "imageUrl", "--server",
+        "appengine.google.com", "--stop-previous-version", "--version", "v1", "--quiet");
 
-  @Test(expected = NullPointerException.class)
-  public void testNullStaging() {
-    new DeployAction(null, NO_FLAGS);
-  }
-
-  @Test
-  public void testCheckFlags_allGood() {
-    Map<Option, String> flags = new HashMap<>();
-    flags.put(Option.BUCKET, "gsbucket");
-    flags.put(Option.DOCKER_BUILD, "image");
-    flags.put(Option.FORCE, "false");
-    flags.put(Option.IMAGE_URL, "image url");
-    flags.put(Option.PROMOTE, "true");
-    flags.put(Option.SERVER, "google.com");
-    flags.put(Option.VERSION, "v1");
-
-    new DeployAction(".", flags);
-  }
-
-  @Test
-  public void testCheckFlags_onlyOne() {
-    Map<Option, String> flags = ImmutableMap.of(Option.SERVER, "google.com");
-    new DeployAction(".", flags);
-  }
-
-  @Test(expected = InvalidFlagException.class)
-  public void testCheckFlags_error() {
-    Map<Option, String> flags = ImmutableMap.of(
-        Option.SERVER, "server.com",
-        Option.ADMIN_HOST, "disallowed flag!!!"
-    );
-
-    new DeployAction(".", flags);
-  }
-
-  @Test
-  public void testExecute() throws GCloudExecutionException, IOException {
-    DeployAction action = new DeployAction(".", NO_FLAGS);
-    action.setProcessCaller(callerMock);
-
-    action.execute();
-
-    verify(callerMock, times(1)).call();
+    verify(processCallerFactory, times(1)).newProcessCaller(eq(Tool.GCLOUD), eq(expectedCommand));
   }
 }

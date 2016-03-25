@@ -25,6 +25,8 @@ import com.google.cloud.tools.app.GCloudExecutionException;
 import com.google.cloud.tools.app.ProcessCaller;
 import com.google.cloud.tools.app.ProcessCaller.ProcessCallerFactory;
 import com.google.cloud.tools.app.ProcessCaller.Tool;
+import com.google.cloud.tools.app.config.module.DeleteConfiguration;
+import com.google.cloud.tools.app.config.module.impl.DefaultDeleteConfiguration;
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
@@ -33,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +51,7 @@ public class DeleteActionTest {
   private ProcessCallerFactory processCallerFactory;
 
   @Before
-  public void setUp() throws GCloudExecutionException {
+  public void setUp() throws GCloudExecutionException, IOException {
     when(processCallerFactory.newProcessCaller(eq(Tool.GCLOUD), isA(ArrayList.class)))
         .thenReturn(callerMock);
     when(callerMock.call()).thenReturn(true);
@@ -56,37 +59,21 @@ public class DeleteActionTest {
 
   @Test
   public void testNewDeleteAction() {
-    DeleteAction.newDeleteAction("v1", "mod1", "mod2")
-        .setServer("appengine.google.com");
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void testNewDeleteAction_nullModules() throws GCloudExecutionException {
-    DeleteAction.newDeleteAction("v1", null).setServer("appengine.google.com");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_emptyModules() throws GCloudExecutionException {
-    DeleteAction.newDeleteAction("v1").setServer("appengine.google.com");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_nullVersion() {
-    DeleteAction.newDeleteAction(null, "mod1");
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void testNewDeleteAction_emptyVersion() {
-    DeleteAction.newDeleteAction("", "mod1");
+    DeleteConfiguration configuration = DefaultDeleteConfiguration.newBuilder("v1", "mod1", "mod2")
+        .server("appengine.google.com")
+        .build();
+    new DeleteAction(configuration);
   }
 
   @Test
-  public void testArguments_all() throws GCloudExecutionException {
+  public void testArguments_all() throws GCloudExecutionException, IOException {
     List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "mod2", "--version",
         "v1", "--server", "appengine.google.com", "--quiet");
 
-    DeleteAction action = DeleteAction.newDeleteAction("v1", "mod1", "mod2")
-        .setServer("appengine.google.com");
+    DeleteConfiguration configuration = DefaultDeleteConfiguration.newBuilder("v1", "mod1")
+        .server("appengine.google.com")
+        .build();
+    DeleteAction action = new DeleteAction(configuration);
     action.setProcessCallerFactory(processCallerFactory);
     action.execute();
 
@@ -94,11 +81,13 @@ public class DeleteActionTest {
   }
 
   @Test
-  public void testArguments_noServer() throws GCloudExecutionException {
+  public void testArguments_noServer() throws GCloudExecutionException, IOException {
     List<String> arguments = ImmutableList.of("modules", "delete", "mod1", "--version", "v1",
         "--quiet");
 
-    DeleteAction action = DeleteAction.newDeleteAction("v1", "mod1");
+    DeleteConfiguration configuration = DefaultDeleteConfiguration.newBuilder("v1", "mod1")
+        .build();
+    DeleteAction action = new DeleteAction(configuration);
     action.setProcessCallerFactory(processCallerFactory);
     action.execute();
 

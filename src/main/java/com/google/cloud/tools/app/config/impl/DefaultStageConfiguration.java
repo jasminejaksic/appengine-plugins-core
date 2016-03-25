@@ -132,7 +132,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
     return new Builder(sourceDirectory, stagingDirectory, appEngineSdkRoot);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Path sourceDirectory;
     private Path stagingDirectory;
     private Path appEngineSdkRoot;

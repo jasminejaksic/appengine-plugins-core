@@ -103,7 +103,7 @@ public class DefaultGetLogsConfiguration implements GetLogsConfiguration {
     return new Builder(ImmutableList.copyOf(modules), version);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<String> modules;
     private String version;
     private String logFileLocation;

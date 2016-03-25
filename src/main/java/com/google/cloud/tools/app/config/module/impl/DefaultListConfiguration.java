@@ -50,7 +50,7 @@ public class DefaultListConfiguration implements ListConfiguration {
     return new Builder(ImmutableList.copyOf(modules));
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<String> modules;
     private String server;
 

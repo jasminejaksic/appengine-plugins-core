@@ -96,7 +96,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     return new Builder(ImmutableList.copyOf(deployables));
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<Path> deployables;
     private String bucket;
     private String dockerBuild;

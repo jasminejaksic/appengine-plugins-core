@@ -59,7 +59,7 @@ public class DefaultStartConfiguration implements StartConfiguration {
     return new Builder(ImmutableList.copyOf(modules), version);
   }
 
-  private static class Builder {
+  public static class Builder {
     private Collection<String> modules;
     private String version;
     private String server;
