@@ -30,7 +30,7 @@ public interface GetLogsConfiguration {
 
   Boolean isAppend();
 
-  String getDays();
+  Integer getDays();
 
   Boolean isDetails();
 

@@ -21,6 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,20 +41,20 @@ public class GenConfigAction extends AppAction {
   }
 
   public boolean execute() throws GCloudExecutionException, IOException {
-    if (!configuration.getSourceDirectory().exists()) {
+    if (Files.notExists(configuration.getSourceDirectory())) {
       logger.severe("Source directory does not exist. Location: "
-          + configuration.getSourceDirectory().getAbsolutePath());
+          + configuration.getSourceDirectory().toString());
     }
-    if (!configuration.getSourceDirectory().isDirectory()) {
+    if (!Files.isDirectory(configuration.getSourceDirectory())) {
       logger.severe("Source location is not a directory. Location: "
-          + configuration.getSourceDirectory().getAbsolutePath());
+          + configuration.getSourceDirectory().toString());
     }
 
     List<String> arguments = new ArrayList<>();
     arguments.add("gen-config");
 
     if (configuration.getSourceDirectory() != null) {
-      arguments.add(configuration.getSourceDirectory().getAbsolutePath());
+      arguments.add(configuration.getSourceDirectory().toString());
     }
     if (!Strings.isNullOrEmpty(configuration.getConfig())) {
       arguments.add("--config");

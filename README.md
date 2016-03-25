@@ -1,4 +1,4 @@
-# Google App Engine Java app management client
+# Google Cloud Platform Java Application Management Library
 
 This is the client Java library to manage App Engine Java applications. It should be used by any application that performs App Engine Java application management. For example, the Maven, Gradle and Eclipse App Engine plugins, custom user tools, etc.
 

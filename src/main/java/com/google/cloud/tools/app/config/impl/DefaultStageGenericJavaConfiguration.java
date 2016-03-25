@@ -56,7 +56,7 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
     return stagingDirectory;
   }
 
-  public Builder newBuilder() {
+  public static Builder newBuilder(Path artifact, Path stagingDirectory) {
     Preconditions.checkNotNull(artifact);
     Preconditions.checkNotNull(stagingDirectory);
 

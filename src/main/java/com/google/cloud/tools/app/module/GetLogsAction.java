@@ -58,9 +58,9 @@ public class GetLogsAction extends AppAction {
     if (configuration.isAppend()) {
       arguments.add("--append");
     }
-    if (!Strings.isNullOrEmpty(configuration.getDays())) {
+    if (configuration.getDays() != null) {
       arguments.add("--days");
-      arguments.add(configuration.getDays());
+      arguments.add(String.valueOf(configuration.getDays()));
     }
     if (configuration.isDetails()) {
       arguments.add("--details");

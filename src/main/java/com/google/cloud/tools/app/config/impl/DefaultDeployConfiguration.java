@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableList;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 /**
  * Default implementation of {@link DeployConfiguration}.
  */
@@ -37,9 +39,10 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   private final Boolean stopPreviousVersion;
   private final String version;
 
-  private DefaultDeployConfiguration(Collection<Path> deployables, String bucket,
-      String dockerBuild, Boolean force, String imageUrl, Boolean promote, String server,
-      Boolean stopPreviousVersion, String version) {
+  private DefaultDeployConfiguration(Collection<Path> deployables, @Nullable String bucket,
+      @Nullable String dockerBuild, @Nullable Boolean force, @Nullable String imageUrl,
+      @Nullable Boolean promote, @Nullable String server, @Nullable Boolean stopPreviousVersion,
+      @Nullable String version) {
     this.deployables = deployables;
     this.bucket = bucket;
     this.dockerBuild = dockerBuild;
@@ -148,7 +151,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
       return this;
     }
 
-    public DefaultDeployConfiguration build() {
+    public DeployConfiguration build() {
       return new DefaultDeployConfiguration(deployables, bucket, dockerBuild, force, imageUrl,
           promote, server, stopPreviousVersion, version);
     }
