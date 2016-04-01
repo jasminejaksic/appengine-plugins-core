@@ -15,10 +15,12 @@
  */
 package com.google.cloud.tools.app.config;
 
+import com.google.cloud.tools.app.action.StageGenericJavaAction;
+
 import java.nio.file.Path;
 
 /**
- * Configuration for {@link com.google.cloud.tools.app.StageGenericJavaAction}.
+ * Configuration for {@link StageGenericJavaAction}.
  */
 public interface StageGenericJavaConfiguration {
 

@@ -15,11 +15,13 @@
  */
 package com.google.cloud.tools.app.config;
 
+import com.google.cloud.tools.app.action.DeployAction;
+
 import java.nio.file.Path;
 import java.util.Collection;
 
 /**
- * Configuration for {@link com.google.cloud.tools.app.DeployAction}.
+ * Configuration for {@link DeployAction}.
  */
 public interface DeployConfiguration {
 
@@ -29,15 +31,15 @@ public interface DeployConfiguration {
 
   String getDockerBuild();
 
-  Boolean isForce();
+  boolean isForce();
 
   String getImageUrl();
 
-  Boolean isPromote();
+  boolean isPromote();
 
   String getServer();
 
-  Boolean isStopPreviousVersion();
+  boolean isStopPreviousVersion();
 
   String getVersion();
 }
