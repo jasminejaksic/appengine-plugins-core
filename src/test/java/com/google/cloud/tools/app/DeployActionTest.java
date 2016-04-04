@@ -53,7 +53,7 @@ public class DeployActionTest {
 
   @Before
   public void setUp() throws IOException {
-    appYaml1 = tmpDir.newFile("app1.yaml").toPath();
+    appYaml1 = tmpDir.newFolder("app1.yaml").toPath();
     appYaml2 = tmpDir.newFile("app2.yaml").toPath();
   }
 

@@ -26,11 +26,16 @@ import com.google.cloud.tools.app.executor.AppExecutor;
 import com.google.cloud.tools.app.executor.ExecutorException;
 import com.google.common.collect.ImmutableList;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -43,11 +48,22 @@ public class GenConfigActionTest {
   @Mock
   private AppExecutor appExecutor;
 
+  @Rule
+  public TemporaryFolder tmpDir = new TemporaryFolder();
+
+  private Path source;
+  private Path dest;
+
+  @Before
+  public void setUp() throws IOException {
+    source = tmpDir.newFolder("source").toPath();
+  }
+
   @Test
   public void testPrepareCommand_allFlags() throws ExecutorException {
 
     GenConfigConfiguration configuration = DefaultGenConfigConfiguration
-        .newBuilder(Paths.get("source"))
+        .newBuilder(source)
         .config("app.yaml")
         .custom(true)
         .runtime("java")
@@ -55,7 +71,7 @@ public class GenConfigActionTest {
     GenConfigAction action = new GenConfigAction(configuration, appExecutor);
 
     List<String> expected = ImmutableList
-        .of("gen-config", "source", "--config", "app.yaml", "--custom", "--runtime",
+        .of("gen-config", source.toString(), "--config", "app.yaml", "--custom", "--runtime",
             "java");
 
     action.execute();
@@ -66,12 +82,12 @@ public class GenConfigActionTest {
   public void testPrepareCommand_noFlags() throws ExecutorException {
 
     GenConfigConfiguration configuration = DefaultGenConfigConfiguration
-        .newBuilder(Paths.get("source"))
+        .newBuilder(source)
         .build();
 
     GenConfigAction action = new GenConfigAction(configuration, appExecutor);
 
-    List<String> expected = ImmutableList.of("gen-config", "source");
+    List<String> expected = ImmutableList.of("gen-config", source.toString());
 
     action.execute();
     verify(appExecutor, times(1)).runApp(eq(expected));

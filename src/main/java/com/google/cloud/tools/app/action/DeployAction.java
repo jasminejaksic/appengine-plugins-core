@@ -17,7 +17,6 @@ package com.google.cloud.tools.app.action;
 
 import com.google.appengine.repackaged.com.google.api.client.util.Strings;
 import com.google.cloud.tools.app.config.DeployConfiguration;
-import com.google.cloud.tools.app.internal.configuration.processor.CliConfigurationProcessor;
 import com.google.cloud.tools.app.executor.AppExecutor;
 import com.google.cloud.tools.app.executor.ExecutorException;
 import com.google.common.base.Preconditions;
@@ -56,8 +55,6 @@ public class DeployAction implements Action {
       }
       arguments.add(deployable.toString());
     }
-
-    System.out.println(new CliConfigurationProcessor().process(configuration));
 
     if (!Strings.isNullOrEmpty(configuration.getBucket())) {
       arguments.add("--bucket");
