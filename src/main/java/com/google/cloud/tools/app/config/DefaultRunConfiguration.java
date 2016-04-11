@@ -18,7 +18,7 @@ package com.google.cloud.tools.app.config;
 import com.google.appengine.repackaged.com.google.api.client.util.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 public class DefaultRunConfiguration implements RunConfiguration {
 
-  private final Collection<Path> appYamls;
+  private final Collection<File> appYamls;
   private final boolean async;
   private final String host;
   private final Integer port;
@@ -52,7 +52,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   private final boolean skipSdkUpdateCheck;
   private final String defaultGcsBucketName;
 
-  private DefaultRunConfiguration(Collection<Path> appYamls, boolean async,
+  private DefaultRunConfiguration(Collection<File> appYamls, boolean async,
       @Nullable String host, @Nullable Integer port, @Nullable String adminHost,
       @Nullable Integer adminPort, @Nullable String authDomain, @Nullable String storagePath,
       @Nullable String logLevel, @Nullable Integer maxModuleInstances,
@@ -88,7 +88,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   }
 
   @Override
-  public Collection<Path> getAppYamls() {
+  public Collection<File> getAppYamls() {
     return appYamls;
   }
 
@@ -202,14 +202,14 @@ public class DefaultRunConfiguration implements RunConfiguration {
     return defaultGcsBucketName;
   }
 
-  public static Builder newBuilder(Path... appYamls) {
+  public static Builder newBuilder(File... appYamls) {
     Preconditions.checkArgument(appYamls.length > 0);
 
     return new Builder(ImmutableList.copyOf(appYamls));
   }
 
   public static class Builder {
-    private Collection<Path> appYamls;
+    private Collection<File> appYamls;
     private boolean async;
     private String host;
     private Integer port;
@@ -233,7 +233,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
     private boolean skipSdkUpdateCheck;
     private String defaultGcsBucketName;
 
-    private Builder(Collection<Path> appYamls) {
+    private Builder(Collection<File> appYamls) {
       this.appYamls = appYamls;
     }
 

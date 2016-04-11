@@ -17,18 +17,18 @@ package com.google.cloud.tools.app.config;
 
 import com.google.cloud.tools.app.action.StageGenericJavaAction;
 
-import java.nio.file.Path;
+import java.io.File;
 
 /**
  * Configuration for {@link StageGenericJavaAction}.
  */
 public interface StageGenericJavaConfiguration {
 
-  Path getAppYaml();
+  File getAppYaml();
 
-  Path getDockerfile();
+  File getDockerfile();
 
-  Path getArtifact();
+  File getArtifact();
 
-  Path getStagingDirectory();
+  File getStagingDirectory();
 }

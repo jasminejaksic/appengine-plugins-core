@@ -32,8 +32,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -45,16 +45,16 @@ public class DeployActionTest {
   @Rule
   public TemporaryFolder tmpDir = new TemporaryFolder();
 
-  private Path appYaml1;
-  private Path appYaml2;
+  private File appYaml1;
+  private File appYaml2;
 
   @Mock
   private AppExecutor appExecutor;
 
   @Before
   public void setUp() throws IOException {
-    appYaml1 = tmpDir.newFolder("app1.yaml").toPath();
-    appYaml2 = tmpDir.newFile("app2.yaml").toPath();
+    appYaml1 = tmpDir.newFile("app1.yaml");
+    appYaml2 = tmpDir.newFile("app2.yaml");
   }
 
   @Test

@@ -15,7 +15,7 @@ package com.google.cloud.tools.app.config;
 
 import com.google.common.base.Preconditions;
 
-import java.nio.file.Path;
+import java.io.File;
 
 import javax.annotation.Nullable;
 
@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
  */
 public class DefaultStageConfiguration implements StageConfiguration {
 
-  private final Path sourceDirectory;
-  private final Path stagingDirectory;
+  private final File sourceDirectory;
+  private final File stagingDirectory;
   private final boolean enableQuickstart;
   private final boolean disableUpdateCheck;
   private final String version;
@@ -36,7 +36,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
   private final boolean deleteJsps;
   private final boolean enableJarClasses;
 
-  private DefaultStageConfiguration(Path sourceDirectory, Path stagingDirectory,
+  private DefaultStageConfiguration(File sourceDirectory, File stagingDirectory,
       boolean enableQuickstart, boolean disableUpdateCheck, @Nullable String version,
       @Nullable String applicationId, boolean enableJarSplitting,
       @Nullable String jarSplittingExcludes, @Nullable String compileEncoding,
@@ -55,12 +55,12 @@ public class DefaultStageConfiguration implements StageConfiguration {
   }
 
   @Override
-  public Path getSourceDirectory() {
+  public File getSourceDirectory() {
     return sourceDirectory;
   }
 
   @Override
-  public Path getStagingDirectory() {
+  public File getStagingDirectory() {
     return stagingDirectory;
   }
 
@@ -109,7 +109,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
     return enableJarClasses;
   }
 
-  public static Builder newBuilder(Path sourceDirectory, Path stagingDirectory) {
+  public static Builder newBuilder(File sourceDirectory, File stagingDirectory) {
     Preconditions.checkNotNull(sourceDirectory);
     Preconditions.checkNotNull(stagingDirectory);
 
@@ -118,8 +118,8 @@ public class DefaultStageConfiguration implements StageConfiguration {
 
   public static class Builder {
 
-    private Path sourceDirectory;
-    private Path stagingDirectory;
+    private File sourceDirectory;
+    private File stagingDirectory;
     private boolean enableQuickstart;
     private boolean disableUpdateCheck;
     private String version;
@@ -130,7 +130,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
     private boolean deleteJsps;
     private boolean enableJarClasses;
 
-    private Builder(Path sourceDirectory, Path stagingDirectory) {
+    private Builder(File sourceDirectory, File stagingDirectory) {
       this.sourceDirectory = sourceDirectory;
       this.stagingDirectory = stagingDirectory;
     }

@@ -17,7 +17,7 @@ package com.google.cloud.tools.app.config;
 
 import com.google.common.base.Preconditions;
 
-import java.nio.file.Path;
+import java.io.File;
 
 import javax.annotation.Nullable;
 
@@ -26,36 +26,36 @@ import javax.annotation.Nullable;
  */
 public class DefaultStageGenericJavaConfiguration implements StageGenericJavaConfiguration {
 
-  private final Path appYaml;
-  private final Path dockerfile;
-  private final Path artifact;
-  private final Path stagingDirectory;
+  private final File appYaml;
+  private final File dockerfile;
+  private final File artifact;
+  private final File stagingDirectory;
 
-  private DefaultStageGenericJavaConfiguration(@Nullable Path appYaml, @Nullable Path dockerfile,
-      Path artifact, Path stagingDirectory) {
+  private DefaultStageGenericJavaConfiguration(@Nullable File appYaml, @Nullable File dockerfile,
+      File artifact, File stagingDirectory) {
     this.appYaml = appYaml;
     this.dockerfile = dockerfile;
     this.artifact = artifact;
     this.stagingDirectory = stagingDirectory;
   }
 
-  public Path getAppYaml() {
+  public File getAppYaml() {
     return appYaml;
   }
 
-  public Path getDockerfile() {
+  public File getDockerfile() {
     return dockerfile;
   }
 
-  public Path getArtifact() {
+  public File getArtifact() {
     return artifact;
   }
 
-  public Path getStagingDirectory() {
+  public File getStagingDirectory() {
     return stagingDirectory;
   }
 
-  public static Builder newBuilder(Path artifact, Path stagingDirectory) {
+  public static Builder newBuilder(File artifact, File stagingDirectory) {
     Preconditions.checkNotNull(artifact);
     Preconditions.checkNotNull(stagingDirectory);
 
@@ -63,22 +63,22 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
   }
 
   public static class Builder {
-    private Path appYaml;
-    private Path dockerfile;
-    private Path artifact;
-    private Path stagingDirectory;
+    private File appYaml;
+    private File dockerfile;
+    private File artifact;
+    private File stagingDirectory;
 
-    private Builder(Path artifact, Path stagingDirectory) {
+    private Builder(File artifact, File stagingDirectory) {
       this.artifact = artifact;
       this.stagingDirectory = stagingDirectory;
     }
 
-    public Builder appYaml(Path appYaml) {
+    public Builder appYaml(File appYaml) {
       this.appYaml = appYaml;
       return this;
     }
 
-    public Builder dockerfile(Path dockerfile) {
+    public Builder dockerfile(File dockerfile) {
       this.dockerfile = dockerfile;
       return this;
     }

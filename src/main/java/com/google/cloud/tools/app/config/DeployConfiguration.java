@@ -17,7 +17,7 @@ package com.google.cloud.tools.app.config;
 
 import com.google.cloud.tools.app.action.DeployAction;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public interface DeployConfiguration {
 
-  Collection<Path> getDeployables();
+  Collection<File> getDeployables();
 
   String getBucket();
 

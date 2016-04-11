@@ -18,7 +18,7 @@ package com.google.cloud.tools.app.config;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 public class DefaultDeployConfiguration implements DeployConfiguration {
 
-  private final Collection<Path> deployables;
+  private final Collection<File> deployables;
   private final String bucket;
   private final String dockerBuild;
   private final boolean force;
@@ -38,7 +38,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   private final boolean stopPreviousVersion;
   private final String version;
 
-  private DefaultDeployConfiguration(Collection<Path> deployables, @Nullable String bucket,
+  private DefaultDeployConfiguration(Collection<File> deployables, @Nullable String bucket,
       @Nullable String dockerBuild, boolean force, @Nullable String imageUrl,
       boolean promote, @Nullable String server, boolean stopPreviousVersion,
       @Nullable String version) {
@@ -54,7 +54,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   }
 
   @Override
-  public Collection<Path> getDeployables() {
+  public Collection<File> getDeployables() {
     return deployables;
   }
 
@@ -98,14 +98,14 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     return version;
   }
 
-  public static Builder newBuilder(Path... deployables) {
+  public static Builder newBuilder(File... deployables) {
     Preconditions.checkArgument(deployables.length > 0);
 
     return new Builder(ImmutableList.copyOf(deployables));
   }
 
   public static class Builder {
-    private Collection<Path> deployables;
+    private Collection<File> deployables;
     private String bucket;
     private String dockerBuild;
     private boolean force;
@@ -115,7 +115,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     private boolean stopPreviousVersion;
     private String version;
 
-    private Builder(Collection<Path> deployables) {
+    private Builder(Collection<File> deployables) {
       this.deployables = deployables;
     }
 

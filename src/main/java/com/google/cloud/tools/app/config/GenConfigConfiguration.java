@@ -17,14 +17,14 @@ package com.google.cloud.tools.app.config;
 
 import com.google.cloud.tools.app.action.GenConfigAction;
 
-import java.nio.file.Path;
+import java.io.File;
 
 /**
  * Configuration for {@link GenConfigAction}.
  */
 public interface GenConfigConfiguration {
 
-  Path getSourceDirectory();
+  File getSourceDirectory();
 
   String getConfig();
 

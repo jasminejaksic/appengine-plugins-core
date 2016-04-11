@@ -21,7 +21,7 @@ import com.google.cloud.tools.app.executor.ExecutorException;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +47,8 @@ public class RunAction implements Action {
   @Override
   public int execute() throws ExecutorException {
     List<String> arguments = new ArrayList<>();
-    for (Path appYaml : configuration.getAppYamls()) {
-      arguments.add(appYaml.toString());
+    for (File appYaml : configuration.getAppYamls()) {
+      arguments.add(appYaml.toPath().toString());
     }
     if (!Strings.isNullOrEmpty(configuration.getHost())) {
       arguments.add("--host");

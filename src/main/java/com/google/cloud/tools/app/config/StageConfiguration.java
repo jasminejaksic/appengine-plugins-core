@@ -17,16 +17,16 @@ package com.google.cloud.tools.app.config;
 
 import com.google.cloud.tools.app.action.StageAction;
 
-import java.nio.file.Path;
+import java.io.File;
 
 /**
  * Configuration for {@link StageAction}.
  */
 public interface StageConfiguration {
 
-  Path getSourceDirectory();
+  File getSourceDirectory();
 
-  Path getStagingDirectory();
+  File getStagingDirectory();
 
   boolean isEnableQuickstart();
 

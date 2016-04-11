@@ -34,9 +34,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -51,12 +50,11 @@ public class GenConfigActionTest {
   @Rule
   public TemporaryFolder tmpDir = new TemporaryFolder();
 
-  private Path source;
-  private Path dest;
+  private File source;
 
   @Before
   public void setUp() throws IOException {
-    source = tmpDir.newFolder("source").toPath();
+    source = tmpDir.newFolder("source");
   }
 
   @Test

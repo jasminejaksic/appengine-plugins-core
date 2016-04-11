@@ -21,7 +21,6 @@ import com.google.cloud.tools.app.executor.ExecutorException;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -45,20 +44,20 @@ public class GenConfigAction implements Action {
 
   @Override
   public int execute() throws ExecutorException {
-    if (Files.notExists(configuration.getSourceDirectory())) {
+    if (!configuration.getSourceDirectory().exists()) {
       logger.severe("Source directory does not exist. Location: "
-          + configuration.getSourceDirectory().toString());
+          + configuration.getSourceDirectory().toPath().toString());
     }
-    if (!Files.isDirectory(configuration.getSourceDirectory())) {
+    if (!configuration.getSourceDirectory().isDirectory()) {
       logger.severe("Source location is not a directory. Location: "
-          + configuration.getSourceDirectory().toString());
+          + configuration.getSourceDirectory().toPath().toString());
     }
 
     List<String> arguments = new ArrayList<>();
     arguments.add("gen-config");
 
     if (configuration.getSourceDirectory() != null) {
-      arguments.add(configuration.getSourceDirectory().toString());
+      arguments.add(configuration.getSourceDirectory().toPath().toString());
     }
     if (!Strings.isNullOrEmpty(configuration.getConfig())) {
       arguments.add("--config");

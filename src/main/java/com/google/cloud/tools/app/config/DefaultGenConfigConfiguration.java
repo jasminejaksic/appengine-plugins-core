@@ -15,7 +15,8 @@
  */
 package com.google.cloud.tools.app.config;
 
-import java.nio.file.Path;
+
+import java.io.File;
 
 import javax.annotation.Nullable;
 
@@ -24,12 +25,12 @@ import javax.annotation.Nullable;
  */
 public class DefaultGenConfigConfiguration implements GenConfigConfiguration {
 
-  private final Path sourceDirectory;
+  private final File sourceDirectory;
   private final String config;
   private final boolean custom;
   private final String runtime;
 
-  private DefaultGenConfigConfiguration(Path sourceDirectory, @Nullable String config,
+  private DefaultGenConfigConfiguration(File sourceDirectory, @Nullable String config,
       boolean custom, @Nullable String runtime) {
     this.sourceDirectory = sourceDirectory;
     this.config = config;
@@ -38,7 +39,7 @@ public class DefaultGenConfigConfiguration implements GenConfigConfiguration {
   }
 
   @Override
-  public Path getSourceDirectory() {
+  public File getSourceDirectory() {
     return sourceDirectory;
   }
 
@@ -57,17 +58,17 @@ public class DefaultGenConfigConfiguration implements GenConfigConfiguration {
     return runtime;
   }
 
-  public static Builder newBuilder(Path sourceDirectory) {
+  public static Builder newBuilder(File sourceDirectory) {
     return new Builder(sourceDirectory);
   }
 
   public static class Builder {
-    private Path sourceDirectory;
+    private File sourceDirectory;
     private String config;
     private boolean custom;
     private String runtime;
 
-    public Builder (Path sourceDirectory) {
+    public Builder (File sourceDirectory) {
       this.sourceDirectory = sourceDirectory;
     }
 

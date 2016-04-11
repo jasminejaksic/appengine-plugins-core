@@ -21,8 +21,7 @@ import com.google.cloud.tools.app.executor.AppExecutor;
 import com.google.cloud.tools.app.executor.ExecutorException;
 import com.google.common.base.Preconditions;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +47,12 @@ public class DeployAction implements Action {
   public int execute() throws ExecutorException {
     List<String> arguments = new ArrayList<>();
     arguments.add("deploy");
-    for (Path deployable : configuration.getDeployables()) {
-      if (!Files.exists(deployable)) {
+    for (File deployable : configuration.getDeployables()) {
+      if (!deployable.exists()) {
         throw new IllegalArgumentException(
-            "Deployable " + deployable.toString() + " does not exist.");
+            "Deployable " + deployable.toPath().toString() + " does not exist.");
       }
-      arguments.add(deployable.toString());
+      arguments.add(deployable.toPath().toString());
     }
 
     if (!Strings.isNullOrEmpty(configuration.getBucket())) {

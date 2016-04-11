@@ -23,13 +23,12 @@ import com.google.cloud.tools.app.config.StageConfiguration;
 import com.google.cloud.tools.app.executor.StageExecutor;
 import com.google.common.collect.ImmutableList;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class StageActionTest {
   public void testCheckFlags_allFlags() {
 
     StageConfiguration configuration = DefaultStageConfiguration
-        .newBuilder(Paths.get("source"), Paths.get("destination"))
+        .newBuilder(new File("source"), new File("destination"))
         .enableQuickstart(true)
         .disableUpdateCheck(true)
         .version("v1")
@@ -73,7 +72,7 @@ public class StageActionTest {
   public void testCheckFlags_noFlags() {
 
     StageConfiguration configuration = DefaultStageConfiguration
-        .newBuilder(Paths.get("source"), Paths.get("destination")).build();
+        .newBuilder(new File("source"), new File("destination")).build();
 
     StageAction action = new StageAction(configuration, stageExecutor);
 

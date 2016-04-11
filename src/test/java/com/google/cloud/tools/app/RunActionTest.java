@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.nio.file.Paths;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class RunActionTest {
   @Test
   public void testPrepareCommand_allFlags() throws ExecutorException {
 
-    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(Paths.get("app.yaml"))
+    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(new File("app.yaml"))
         .host("host")
         .port(8090)
         .adminHost("adminHost")
@@ -89,7 +89,7 @@ public class RunActionTest {
   @Test
   public void testPrepareCommand_noFlags() throws ExecutorException {
 
-    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(Paths.get("app.yaml"))
+    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(new File("app.yaml"))
         .build();
 
     RunAction action = new RunAction(configuration, devAppServerExecutor);
@@ -102,7 +102,7 @@ public class RunActionTest {
 
   public void testPrepareCommand_noFlagsAsync() throws ExecutorException {
 
-    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(Paths.get("app.yaml"))
+    RunConfiguration configuration = DefaultRunConfiguration.newBuilder(new File("app.yaml"))
         .async(true)
         .build();
 

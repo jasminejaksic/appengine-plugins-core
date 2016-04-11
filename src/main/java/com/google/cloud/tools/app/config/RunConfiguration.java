@@ -17,7 +17,7 @@ package com.google.cloud.tools.app.config;
 
 import com.google.cloud.tools.app.action.RunAction;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.util.Collection;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Collection;
 public interface RunConfiguration {
   // TODO(joaomartins): Only contains common, jvm, Python, VM and misc flags for now. Need to add
   // PHP, AppIdentity, Blobstore, etc.
-  Collection<Path> getAppYamls();
+  Collection<File> getAppYamls();
 
   boolean isRunAsync();
 

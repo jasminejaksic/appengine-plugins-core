@@ -44,8 +44,8 @@ public class StageAction implements Action {
   @Override
   public int execute() {
     List<String> arguments = new ArrayList<>();
-    arguments.add(configuration.getSourceDirectory().toString());
-    arguments.add(configuration.getStagingDirectory().toString());
+    arguments.add(configuration.getSourceDirectory().toPath().toString());
+    arguments.add(configuration.getStagingDirectory().toPath().toString());
     if (configuration.isEnableQuickstart()) {
       arguments.add("--enable_quickstart");
     }

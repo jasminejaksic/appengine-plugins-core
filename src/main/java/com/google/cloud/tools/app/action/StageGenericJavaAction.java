@@ -1,17 +1,15 @@
 /**
  * Copyright 2016 Google Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.google.cloud.tools.app.action;
 
@@ -48,38 +46,40 @@ public class StageGenericJavaAction implements Action {
    */
   @Override
   public int execute() throws IOException {
-    if (Files.notExists(configuration.getStagingDirectory())) {
+    if (!configuration.getStagingDirectory().exists()) {
       logger.severe("Staging directory does not exist. Location: "
-          + configuration.getStagingDirectory().toString());
+          + configuration.getStagingDirectory().toPath().toString());
       return 1;
     }
-    if (!Files.isDirectory(configuration.getStagingDirectory())) {
+    if (!configuration.getStagingDirectory().isDirectory()) {
       logger.severe("Staging location is not a directory. Location: "
-          + configuration.getStagingDirectory().toString());
+          + configuration.getStagingDirectory().toPath().toString());
       return 1;
     }
 
     // Copy app.yaml to staging.
-    if (configuration.getAppYaml() != null && Files.exists(configuration.getAppYaml())) {
-      Files.copy(configuration.getAppYaml(),
-          Paths.get(configuration.getStagingDirectory().toString(),
-              configuration.getAppYaml().getFileName().toString()),
+    if (configuration.getAppYaml() != null && configuration.getAppYaml().exists()) {
+      Files.copy(configuration.getAppYaml().toPath(),
+          configuration.getStagingDirectory().toPath()
+              .resolve(configuration.getAppYaml().toPath().getFileName()),
           REPLACE_EXISTING);
     }
 
     // Copy Dockerfile to staging.
-    if (configuration.getDockerfile() != null && Files.exists(configuration.getDockerfile())) {
-      Files.copy(configuration.getDockerfile(),
-          Paths.get(configuration.getStagingDirectory().toString(),
-              configuration.getDockerfile().getFileName().toString()),
+    if (configuration.getDockerfile() != null && configuration.getDockerfile().exists()) {
+      Files.copy(configuration.getDockerfile().toPath(),
+          configuration.getStagingDirectory().toPath()
+              .resolve(configuration.getDockerfile().toPath().getFileName()),
           REPLACE_EXISTING);
     }
 
+    // TODO : looks like this section should error on no artifacts found? and maybe the
+    // TODO : earlier ones should warn?
     // Copy the JAR/WAR file to staging.
-    if (configuration.getArtifact() != null && Files.exists(configuration.getArtifact())) {
-      Files.copy(configuration.getArtifact(),
-          Paths.get(configuration.getStagingDirectory().toString(),
-              configuration.getArtifact().getFileName().toString()),
+    if (configuration.getArtifact() != null && configuration.getArtifact().exists()) {
+      Files.copy(configuration.getArtifact().toPath(),
+          configuration.getStagingDirectory().toPath()
+              .resolve(configuration.getArtifact().toPath().getFileName()),
           REPLACE_EXISTING);
     }
 
