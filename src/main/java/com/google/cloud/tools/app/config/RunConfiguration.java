@@ -18,7 +18,7 @@ package com.google.cloud.tools.app.config;
 import com.google.cloud.tools.app.action.RunAction;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Configuration of {@link RunAction}.
@@ -26,7 +26,7 @@ import java.util.Collection;
 public interface RunConfiguration {
   // TODO(joaomartins): Only contains common, jvm, Python, VM and misc flags for now. Need to add
   // PHP, AppIdentity, Blobstore, etc.
-  Collection<File> getAppYamls();
+  List<File> getAppYamls();
 
   boolean isRunAsync();
 
@@ -54,7 +54,7 @@ public interface RunConfiguration {
 
   String getPythonStartupArgs();
 
-  Collection<String> getJvmFlags();
+  List<String> getJvmFlags();
 
   String getCustomEntrypoint();
 

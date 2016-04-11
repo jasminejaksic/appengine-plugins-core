@@ -19,7 +19,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 public class DefaultDeployConfiguration implements DeployConfiguration {
 
-  private final Collection<File> deployables;
+  private final List<File> deployables;
   private final String bucket;
   private final String dockerBuild;
   private final boolean force;
@@ -38,7 +38,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   private final boolean stopPreviousVersion;
   private final String version;
 
-  private DefaultDeployConfiguration(Collection<File> deployables, @Nullable String bucket,
+  private DefaultDeployConfiguration(List<File> deployables, @Nullable String bucket,
       @Nullable String dockerBuild, boolean force, @Nullable String imageUrl,
       boolean promote, @Nullable String server, boolean stopPreviousVersion,
       @Nullable String version) {
@@ -54,7 +54,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   }
 
   @Override
-  public Collection<File> getDeployables() {
+  public List<File> getDeployables() {
     return deployables;
   }
 
@@ -105,7 +105,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
   }
 
   public static class Builder {
-    private Collection<File> deployables;
+    private List<File> deployables;
     private String bucket;
     private String dockerBuild;
     private boolean force;
@@ -115,7 +115,7 @@ public class DefaultDeployConfiguration implements DeployConfiguration {
     private boolean stopPreviousVersion;
     private String version;
 
-    private Builder(Collection<File> deployables) {
+    private Builder(List<File> deployables) {
       this.deployables = deployables;
     }
 

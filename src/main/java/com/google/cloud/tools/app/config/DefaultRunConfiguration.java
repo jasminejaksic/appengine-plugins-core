@@ -19,7 +19,7 @@ import com.google.appengine.repackaged.com.google.api.client.util.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  */
 public class DefaultRunConfiguration implements RunConfiguration {
 
-  private final Collection<File> appYamls;
+  private final List<File> appYamls;
   private final boolean async;
   private final String host;
   private final Integer port;
@@ -42,7 +42,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   private final String threadsafeOverride;
   private final String pythonStartupScript;
   private final String pythonStartupArgs;
-  private final Collection<String> jvmFlags;
+  private final List<String> jvmFlags;
   private final String customEntrypoint;
   private final String runtime;
   private final boolean allowSkippedFiles;
@@ -52,13 +52,13 @@ public class DefaultRunConfiguration implements RunConfiguration {
   private final boolean skipSdkUpdateCheck;
   private final String defaultGcsBucketName;
 
-  private DefaultRunConfiguration(Collection<File> appYamls, boolean async,
+  private DefaultRunConfiguration(List<File> appYamls, boolean async,
       @Nullable String host, @Nullable Integer port, @Nullable String adminHost,
       @Nullable Integer adminPort, @Nullable String authDomain, @Nullable String storagePath,
       @Nullable String logLevel, @Nullable Integer maxModuleInstances,
       boolean useMtimeFileWatcher, @Nullable String threadsafeOverride,
       @Nullable String pythonStartupScript, @Nullable String pythonStartupArgs,
-      @Nullable Collection<String> jvmFlags, @Nullable String customEntrypoint,
+      @Nullable List<String> jvmFlags, @Nullable String customEntrypoint,
       @Nullable String runtime, boolean allowSkippedFiles, @Nullable Integer apiPort,
       boolean automaticRestart, @Nullable String devAppserverLogLevel,
       boolean skipSdkUpdateCheck, @Nullable String defaultGcsBucketName) {
@@ -88,7 +88,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   }
 
   @Override
-  public Collection<File> getAppYamls() {
+  public List<File> getAppYamls() {
     return appYamls;
   }
 
@@ -158,7 +158,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   }
 
   @Override
-  public Collection<String> getJvmFlags() {
+  public List<String> getJvmFlags() {
     return jvmFlags;
   }
 
@@ -209,7 +209,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
   }
 
   public static class Builder {
-    private Collection<File> appYamls;
+    private List<File> appYamls;
     private boolean async;
     private String host;
     private Integer port;
@@ -223,7 +223,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
     private String threadsafeOverride;
     private String pythonStartupScript;
     private String pythonStartupArgs;
-    private Collection<String> jvmFlags;
+    private List<String> jvmFlags;
     private String customEntrypoint;
     private String runtime;
     private boolean allowSkippedFiles;
@@ -233,7 +233,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
     private boolean skipSdkUpdateCheck;
     private String defaultGcsBucketName;
 
-    private Builder(Collection<File> appYamls) {
+    private Builder(List<File> appYamls) {
       this.appYamls = appYamls;
     }
 
@@ -302,7 +302,7 @@ public class DefaultRunConfiguration implements RunConfiguration {
       return this;
     }
 
-    public Builder jvmFlags(Collection<String> jvmFlags) {
+    public Builder jvmFlags(List<String> jvmFlags) {
       this.jvmFlags = jvmFlags;
       return this;
     }

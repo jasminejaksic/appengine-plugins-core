@@ -18,14 +18,14 @@ package com.google.cloud.tools.app.config;
 import com.google.cloud.tools.app.action.DeployAction;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Configuration for {@link DeployAction}.
  */
 public interface DeployConfiguration {
 
-  Collection<File> getDeployables();
+  List<File> getDeployables();
 
   String getBucket();
 
