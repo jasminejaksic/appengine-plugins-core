@@ -15,14 +15,14 @@
  */
 package com.google.cloud.tools.app.config;
 
-import com.google.cloud.tools.app.action.StageGenericJavaAction;
+import com.google.cloud.tools.app.action.ArtifactStageAction;
 
 import java.io.File;
 
 /**
- * Configuration for {@link StageGenericJavaAction}.
+ * Configuration for {@link ArtifactStageAction}.
  */
-public interface StageGenericJavaConfiguration {
+public interface ArtifactStageConfiguration {
 
   File getAppYaml();
 

@@ -22,16 +22,16 @@ import java.io.File;
 import javax.annotation.Nullable;
 
 /**
- * Default implementation of {@link StageGenericJavaConfiguration}.
+ * Default implementation of {@link ArtifactStageConfiguration}.
  */
-public class DefaultStageGenericJavaConfiguration implements StageGenericJavaConfiguration {
+public class DefaultArtifactStageConfiguration implements ArtifactStageConfiguration {
 
   private final File appYaml;
   private final File dockerfile;
   private final File artifact;
   private final File stagingDirectory;
 
-  private DefaultStageGenericJavaConfiguration(@Nullable File appYaml, @Nullable File dockerfile,
+  private DefaultArtifactStageConfiguration(@Nullable File appYaml, @Nullable File dockerfile,
       File artifact, File stagingDirectory) {
     this.appYaml = appYaml;
     this.dockerfile = dockerfile;
@@ -39,18 +39,22 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
     this.stagingDirectory = stagingDirectory;
   }
 
+  @Override
   public File getAppYaml() {
     return appYaml;
   }
 
+  @Override
   public File getDockerfile() {
     return dockerfile;
   }
 
+  @Override
   public File getArtifact() {
     return artifact;
   }
 
+  @Override
   public File getStagingDirectory() {
     return stagingDirectory;
   }
@@ -83,8 +87,8 @@ public class DefaultStageGenericJavaConfiguration implements StageGenericJavaCon
       return this;
     }
 
-    public StageGenericJavaConfiguration build() {
-      return new DefaultStageGenericJavaConfiguration(appYaml, dockerfile, artifact,
+    public ArtifactStageConfiguration build() {
+      return new DefaultArtifactStageConfiguration(appYaml, dockerfile, artifact,
           stagingDirectory);
     }
   }

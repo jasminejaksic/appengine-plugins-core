@@ -20,6 +20,8 @@ import com.google.cloud.tools.app.config.StageConfiguration;
 import com.google.cloud.tools.app.executor.StageExecutor;
 import com.google.common.base.Preconditions;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class StageAction implements Action {
   }
 
   @Override
-  public int execute() {
+  public int execute() throws IOException {
     List<String> arguments = new ArrayList<>();
     arguments.add(configuration.getSourceDirectory().toPath().toString());
     arguments.add(configuration.getStagingDirectory().toPath().toString());
@@ -78,6 +80,9 @@ public class StageAction implements Action {
       arguments.add("--enable_jar_classes");
     }
 
-    return stageExecutor.runStage(arguments);
+    Path dockerfilePath =
+        configuration.getDockerfile() == null ? null : configuration.getDockerfile().toPath();
+    return stageExecutor
+        .runStage(arguments, dockerfilePath, configuration.getStagingDirectory().toPath());
   }
 }

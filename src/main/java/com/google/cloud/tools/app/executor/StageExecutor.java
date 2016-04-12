@@ -1,12 +1,14 @@
 package com.google.cloud.tools.app.executor;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-/**
- * Created by appu on 4/1/16.
- */
+import javax.annotation.Nullable;
+
 public interface StageExecutor {
 
-  int runStage(List<String> args);
+  int runStage(List<String> args, @Nullable Path dockerfile, @Nullable Path dockerfileDestination)
+      throws IOException;
 
 }

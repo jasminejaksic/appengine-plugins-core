@@ -30,10 +30,12 @@ public class DefaultStopConfiguration implements StopConfiguration {
     this.adminPort = adminPort;
   }
 
+  @Override
   public String getAdminHost() {
     return adminHost;
   }
 
+  @Override
   public Integer getAdminPort() {
     return adminPort;
   }

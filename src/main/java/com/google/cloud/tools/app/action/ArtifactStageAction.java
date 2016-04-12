@@ -15,23 +15,22 @@ package com.google.cloud.tools.app.action;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-import com.google.cloud.tools.app.config.StageGenericJavaConfiguration;
+import com.google.cloud.tools.app.config.ArtifactStageConfiguration;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
  * Stages a Java JAR/WAR Managed VMs application to be deployed.
  */
-public class StageGenericJavaAction implements Action {
+public class ArtifactStageAction implements Action {
 
-  private static Logger logger = Logger.getLogger(StageGenericJavaAction.class.getName());
-  private StageGenericJavaConfiguration configuration;
+  private static Logger logger = Logger.getLogger(ArtifactStageAction.class.getName());
+  private ArtifactStageConfiguration configuration;
 
-  public StageGenericJavaAction(StageGenericJavaConfiguration configuration) {
+  public ArtifactStageAction(ArtifactStageConfiguration configuration) {
     Preconditions.checkNotNull(configuration);
     Preconditions.checkNotNull(configuration.getStagingDirectory());
     Preconditions.checkNotNull(configuration.getArtifact());

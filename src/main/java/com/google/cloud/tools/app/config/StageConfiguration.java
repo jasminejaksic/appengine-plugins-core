@@ -28,6 +28,8 @@ public interface StageConfiguration {
 
   File getStagingDirectory();
 
+  File getDockerfile();
+
   boolean isEnableQuickstart();
 
   boolean isDisableUpdateCheck();

@@ -14,6 +14,7 @@
 package com.google.cloud.tools.app;
 
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -29,6 +30,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -40,11 +43,16 @@ public class StageActionTest {
   @Mock
   StageExecutor stageExecutor;
 
+  private File source = new File("source");
+  private File destination = new File("destination");
+  private File dockerfile = new File("dockerfile");
+
   @Test
-  public void testCheckFlags_allFlags() {
+  public void testCheckFlags_allFlags() throws IOException {
 
     StageConfiguration configuration = DefaultStageConfiguration
-        .newBuilder(new File("source"), new File("destination"))
+        .newBuilder(source, destination)
+        .dockerfile(dockerfile)
         .enableQuickstart(true)
         .disableUpdateCheck(true)
         .version("v1")
@@ -65,11 +73,12 @@ public class StageActionTest {
             "--enable_jar_classes");
 
     action.execute();
-    verify(stageExecutor, times(1)).runStage(eq(expected));
+    verify(stageExecutor, times(1))
+        .runStage(eq(expected), eq(dockerfile.toPath()), eq(destination.toPath()));
   }
 
   @Test
-  public void testCheckFlags_noFlags() {
+  public void testCheckFlags_noFlags() throws IOException {
 
     StageConfiguration configuration = DefaultStageConfiguration
         .newBuilder(new File("source"), new File("destination")).build();
@@ -79,6 +88,6 @@ public class StageActionTest {
     List<String> expected = ImmutableList.of("source", "destination");
 
     action.execute();
-    verify(stageExecutor, times(1)).runStage(eq(expected));
+    verify(stageExecutor, times(1)).runStage(eq(expected), isNull(Path.class), eq(destination.toPath()));
   }
 }

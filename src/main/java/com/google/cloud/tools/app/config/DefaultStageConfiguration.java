@@ -26,6 +26,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
 
   private final File sourceDirectory;
   private final File stagingDirectory;
+  private final File dockerfile;
   private final boolean enableQuickstart;
   private final boolean disableUpdateCheck;
   private final String version;
@@ -37,12 +38,13 @@ public class DefaultStageConfiguration implements StageConfiguration {
   private final boolean enableJarClasses;
 
   private DefaultStageConfiguration(File sourceDirectory, File stagingDirectory,
-      boolean enableQuickstart, boolean disableUpdateCheck, @Nullable String version,
-      @Nullable String applicationId, boolean enableJarSplitting,
-      @Nullable String jarSplittingExcludes, @Nullable String compileEncoding,
-      boolean deleteJsps, boolean enableJarClasses) {
+      @Nullable File dockerfile, boolean enableQuickstart, boolean disableUpdateCheck,
+      @Nullable String version, @Nullable String applicationId, boolean enableJarSplitting,
+      @Nullable String jarSplittingExcludes, @Nullable String compileEncoding, boolean deleteJsps,
+      boolean enableJarClasses) {
     this.sourceDirectory = sourceDirectory;
     this.stagingDirectory = stagingDirectory;
+    this.dockerfile = dockerfile;
     this.enableQuickstart = enableQuickstart;
     this.disableUpdateCheck = disableUpdateCheck;
     this.version = version;
@@ -62,6 +64,11 @@ public class DefaultStageConfiguration implements StageConfiguration {
   @Override
   public File getStagingDirectory() {
     return stagingDirectory;
+  }
+
+  @Override
+  public File getDockerfile() {
+    return dockerfile;
   }
 
   @Override
@@ -120,6 +127,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
 
     private File sourceDirectory;
     private File stagingDirectory;
+    private File dockerfile;
     private boolean enableQuickstart;
     private boolean disableUpdateCheck;
     private String version;
@@ -133,6 +141,11 @@ public class DefaultStageConfiguration implements StageConfiguration {
     private Builder(File sourceDirectory, File stagingDirectory) {
       this.sourceDirectory = sourceDirectory;
       this.stagingDirectory = stagingDirectory;
+    }
+
+    public Builder dockerfile(File dockerfile) {
+      this.dockerfile = dockerfile;
+      return this;
     }
 
     public Builder enableQuickstart(boolean enableQuickstart) {
@@ -181,7 +194,7 @@ public class DefaultStageConfiguration implements StageConfiguration {
     }
 
     public StageConfiguration build() {
-      return new DefaultStageConfiguration(sourceDirectory, stagingDirectory,
+      return new DefaultStageConfiguration(sourceDirectory, stagingDirectory, dockerfile,
           enableQuickstart, disableUpdateCheck, version, applicationId, enableJarSplitting,
           jarSplittingExcludes, compileEncoding, deleteJsps, enableJarClasses);
     }
