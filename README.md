@@ -1,4 +1,5 @@
-# Google Cloud Platform Java Application Management Library
+[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+# Google App Engine Java app management client
 
 This is the client Java library to manage App Engine Java applications. It should be used by any application that performs App Engine Java application management. For example, the Maven, Gradle and Eclipse App Engine plugins, custom user tools, etc.
 
@@ -59,3 +60,4 @@ AppAction deployAction = new DeployAction(configuration);
 // Execute the action.
 
 deployAction.execute();
+
