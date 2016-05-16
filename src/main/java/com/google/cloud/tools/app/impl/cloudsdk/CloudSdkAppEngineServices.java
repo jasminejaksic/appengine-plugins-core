@@ -21,7 +21,7 @@ import com.google.cloud.tools.app.api.services.AppEngineServices;
 import com.google.cloud.tools.app.api.services.TrafficSplitConfiguration;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessRunnerException;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk;
-import com.google.cloud.tools.app.impl.cloudsdk.util.Args;
+import com.google.cloud.tools.app.impl.cloudsdk.args.GcloudArgs;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class CloudSdkAppEngineServices implements AppEngineServices {
     arguments.add("set-traffic");
     arguments.addAll(configuration.getServices());
     arguments.add("--splits");
-    arguments.addAll(Args.keyValues(configuration.getVersionToTrafficSplit()));
+    arguments.addAll(GcloudArgs.keyValues(configuration.getVersionToTrafficSplit()));
 
     execute(arguments);
   }
