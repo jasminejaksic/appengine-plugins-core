@@ -32,43 +32,27 @@ public class DevAppServerArgs {
    * @return [--name, value] or [] if value=null.
    */
   public static List<String> get(String name, String value) {
-    if (!Strings.isNullOrEmpty(value)) {
-      return Arrays.asList("--" + name, value);
-    }
-    return Collections.emptyList();
+    return Args.string(name, value);
   }
 
   /**
    * @return [--name, value1, --name, value2, ...] or [] if value=null.
    */
   public static List<String> get(String name, List<String> values) {
-    List<String> result = Lists.newArrayList();
-    if (values != null) {
-      for (String value : values) {
-        result.add("--" + name);
-        result.add(value);
-      }
-    }
-    return result;
+    return Args.strings(name, values);
   }
 
   /**
    * @return [--name, value] or [] if value=null.
    */
   public static List<String> get(String name, Integer value) {
-    if (value != null) {
-      return Arrays.asList("--" + name, value.toString());
-    }
-    return Collections.emptyList();
+    return Args.integer(name, value);
   }
 
   /**
    * @return [--name] if value=true, [] if value=false/null.
    */
   public static List<String> get(String name, Boolean value) {
-    if (Boolean.TRUE.equals(value)) {
-      return Collections.singletonList("--" + name);
-    }
-    return Collections.emptyList();
+    return Args.bool(name, value);
   }
 }

@@ -30,19 +30,13 @@ public class AppCfgArgs {
    * @return [--name=value] or [] if value=null.
    */
   public static List<String> get(String name, String value) {
-    if (!Strings.isNullOrEmpty(value)) {
-      return Collections.singletonList("--" + name + "=" + value);
-    }
-    return Collections.emptyList();
+    return Args.stringEq(name, value);
   }
 
   /**
    * @return [--name] if value=true, [] if value=false/null.
    */
   public static List<String> get(String name, Boolean value) {
-    if (Boolean.TRUE.equals(value)) {
-      return Collections.singletonList("--" + name);
-    }
-    return Collections.emptyList();
+    return Args.bool(name, value);
   }
 }
