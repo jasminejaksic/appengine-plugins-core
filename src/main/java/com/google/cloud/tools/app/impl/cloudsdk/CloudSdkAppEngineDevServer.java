@@ -18,7 +18,7 @@ import com.google.cloud.tools.app.api.AppEngineException;
 import com.google.cloud.tools.app.api.devserver.AppEngineDevServer;
 import com.google.cloud.tools.app.api.devserver.RunConfiguration;
 import com.google.cloud.tools.app.api.devserver.StopConfiguration;
-import com.google.cloud.tools.app.impl.cloudsdk.args.DevAppServerArgs;
+import com.google.cloud.tools.app.impl.cloudsdk.internal.args.DevAppServerArgs;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessRunnerException;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk;
 import com.google.common.base.Preconditions;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.app.impl.cloudsdk.args;
+package com.google.cloud.tools.app.impl.cloudsdk.internal.args;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Command Line argument helper.
+ * Command Line argument helper for gcloud based commands.
  */
 public class GcloudArgs {
 

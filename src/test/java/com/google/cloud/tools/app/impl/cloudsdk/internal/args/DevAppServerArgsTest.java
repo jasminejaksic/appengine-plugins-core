@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.app.impl.cloudsdk.args;
+package com.google.cloud.tools.app.impl.cloudsdk.internal.args;
 
 import static org.junit.Assert.assertEquals;
 

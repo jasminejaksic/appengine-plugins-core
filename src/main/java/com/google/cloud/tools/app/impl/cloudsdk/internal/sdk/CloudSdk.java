@@ -15,13 +15,20 @@
 package com.google.cloud.tools.app.impl.cloudsdk.internal.sdk;
 
 import com.google.cloud.tools.app.api.AppEngineException;
+<<<<<<< 350b494892d7a477b33b640253fba06c1665fa28
 import com.google.cloud.tools.app.impl.cloudsdk.args.GcloudArgs;
+=======
+import com.google.cloud.tools.app.impl.cloudsdk.internal.args.GcloudArgs;
+>>>>>>> fix checkstyle and update Deploy
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.DefaultProcessRunner;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessExitListener;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessOutputLineListener;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessRunner;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.ProcessRunnerException;
+<<<<<<< 350b494892d7a477b33b640253fba06c1665fa28
 import com.google.cloud.tools.app.impl.cloudsdk.internal.process.WaitingProcessOutputLineListener;
+=======
+>>>>>>> fix checkstyle and update Deploy
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.app.impl.cloudsdk.args;
+package com.google.cloud.tools.app.impl.cloudsdk.internal.args;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
- * Unit tests for {@link DevAppServerArgs}
+ * Unit tests for {@link AppCfgArgs}
  */
 public class AppCfgArgsTest {
 
