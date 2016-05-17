@@ -62,16 +62,7 @@ public class GcloudArgs {
   /**
    * @return [key1=value1,key2=value2,...], [] if keyValueMapping=empty/null
    */
-  public static List<String> keyValues(Map<?, ?> keyValueMapping) {
-    List<String> result = Lists.newArrayList();
-    if (keyValueMapping != null && keyValueMapping.size() > 0) {
-      for (Map.Entry<?, ?> entry : keyValueMapping.entrySet()) {
-        result.add(entry.getKey() + "=" + entry.getValue());
-      }
-      Joiner joiner = Joiner.on(",");
-      return Collections.singletonList(joiner.join(result));
-    }
-
-    return Collections.emptyList();
+  public static List<String> get(Map<?, ?> keyValueMapping) {
+    return Args.keyValues(keyValueMapping);
   }
 }
