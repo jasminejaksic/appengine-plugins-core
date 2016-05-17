@@ -16,22 +16,18 @@
 
 package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 
+import com.google.cloud.tools.app.api.AppEngineException;
+
 /**
- * Default process exit listener that simply captures the exit code and makes it available with a
- * getter. Before the process exit code is captured, it's initialized to -1.
+ * Created by appu on 5/17/16.
  */
-public class DefaultProcessExitListener implements ProcessExitListener {
-  private int exitCode = -1;
+public class NonZeroExceptionExitListener implements ProcessExitListener {
 
   @Override
   public void exit(int exitCode) {
-    this.exitCode = exitCode;
+    if (exitCode != 0) {
+      throw new AppEngineException("Non zero exit : " + exitCode);
+    }
   }
 
-  /**
-   * @return The captures process exit code.
-   */
-  public int getExitCode() {
-    return exitCode;
-  }
 }
