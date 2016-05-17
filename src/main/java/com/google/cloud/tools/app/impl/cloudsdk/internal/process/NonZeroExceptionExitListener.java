@@ -19,14 +19,14 @@ package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 import com.google.cloud.tools.app.api.AppEngineException;
 
 /**
- * Created by appu on 5/17/16.
+ * Exit listener that throws a {@link AppEngineException} on a non-zero exit value.
  */
 public class NonZeroExceptionExitListener implements ProcessExitListener {
 
   @Override
   public void exit(int exitCode) {
     if (exitCode != 0) {
-      throw new AppEngineException("Non zero exit : " + exitCode);
+      throw new AppEngineException("Non zero exit: " + exitCode);
     }
   }
 
