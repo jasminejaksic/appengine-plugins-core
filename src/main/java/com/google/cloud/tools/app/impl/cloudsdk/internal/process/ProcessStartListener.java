@@ -17,21 +17,9 @@
 package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 
 /**
- * Default process exit listener that simply captures the exit code and makes it available with a
- * getter. Before the process exit code is captured, it's initialized to -1.
+ * Process listener that can be used with {@link DefaultProcessRunner} to retrieve the Process when
+ * it's created and started.
  */
-public class DefaultProcessExitListener implements ProcessExitListener {
-  private int exitCode = -1;
-
-  @Override
-  public void exit(int exitCode) {
-    this.exitCode = exitCode;
-  }
-
-  /**
-   * @return The captures process exit code.
-   */
-  public int getExitCode() {
-    return exitCode;
-  }
+public interface ProcessStartListener {
+  void start(Process process);
 }
