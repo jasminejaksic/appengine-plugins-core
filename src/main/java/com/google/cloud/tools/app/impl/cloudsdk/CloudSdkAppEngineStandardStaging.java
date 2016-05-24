@@ -71,12 +71,12 @@ public class CloudSdkAppEngineStandardStaging implements AppEngineStandardStagin
     Path dockerfileDestination = config.getSourceDirectory().toPath();
 
     try {
+
       if (dockerfile != null && dockerfile.toFile().exists()) {
         Files.copy(dockerfile, dockerfileDestination, StandardCopyOption.REPLACE_EXISTING);
       }
 
       cloudSdk.runAppCfgCommand(arguments);
-
 
     } catch (IOException | ProcessRunnerException e) {
       throw new AppEngineException(e);
