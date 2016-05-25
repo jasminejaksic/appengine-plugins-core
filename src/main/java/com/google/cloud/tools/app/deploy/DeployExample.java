@@ -16,8 +16,11 @@
 
 package com.google.cloud.tools.app.deploy;
 
+import com.google.cloud.tools.app.api.deploy.DeployConfiguration;
 import com.google.cloud.tools.app.deploy.gcloud.GcloudAppDeploy;
 import com.google.cloud.tools.app.deploy.process.LoggingOutputHandler;
+import com.google.cloud.tools.app.deploy.process.NullOutputHandler;
+import com.google.cloud.tools.app.deploy.process.PrintStreamOutputHandler;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk;
 import com.google.cloud.tools.app.impl.config.DefaultDeployConfiguration;
 
@@ -30,23 +33,29 @@ public class DeployExample {
 
   public static void howToUse() {
     // presumably the sdk object comes from somewhere else, but lets build it here
-    // you can also set enviroment on it
+    // you can also set some other things on it
     CloudSdk sdk = new CloudSdk.Builder().sdkPath(new File("some/path")).build();
 
-    // create the deploy object
-    Deploy deploy = GcloudAppDeploy.newBuilder(sdk).build();
+    // this thing doesn't exist, but should return a DefaultDeployConfiguration
+    DeployConfiguration config = new DeployConfigurationBuilder().whatever("asdf").build();
 
-    // set the output handler for non-result output
-    deploy.setOutputHandler(new LoggingOutputHandler("test", Level.INFO));
 
-    // start the deployment
-    Future<String> deployFuture = deploy.deploy(new DefaultDeployConfiguration());
+    // do the deploy
+    Future<DeployResult> deployFuture = Deploy
+        .newRequestFactory(sdk) // [required]
+        .newDeploymentRequest(config) // [required]
+        .setStatusUpdater(new LoggingOutputHandler("test", Level.INFO)) // [optional]
+        .setStatusUpdater(new NullOutputHandler()) // [optional]
+        .setStatusUpdater(new PrintStreamOutputHandler(System.err)) // [optional]
+        .deploy();
 
     try {
-      // get the result -- a waiting call
-      deployFuture.get();
+      // get the result -- a blocking call
+      DeployResult result = deployFuture.get();
+
       // or kill it!
       deployFuture.cancel(true);
+
       // or whatever, I don't know, anything a future can do
 
     } catch (InterruptedException | ExecutionException e) {

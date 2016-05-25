@@ -27,16 +27,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class GcloudFuture implements Future<String> {
-
-  // does this need to be synchronized some how when storing the result?
+// should we just be putting the process on an executor and retrieving the result instead of this?
+// will that even allow background devappserver runs?
+public class GcloudFuture<T> implements Future<T> {
 
   private List<String> result = Lists.newArrayList();
+  private StringResultConverter<T> resultConverter;
   private final Process process;
   private boolean cancelled = false;
 
-  public GcloudFuture(Process process) {
+  public GcloudFuture(Process process, StringResultConverter<T> resultConverter) {
     this.process = process;
+    this.resultConverter = resultConverter;
 
     StreamConsumer.startNewConsumer(process.getInputStream(), new OutputHandler() {
       @Override
@@ -76,17 +78,18 @@ public class GcloudFuture implements Future<String> {
   }
 
   @Override
-  public String get() throws InterruptedException, ExecutionException {
+  public T get() throws InterruptedException, ExecutionException {
     int exitCode = process.waitFor();
     if (exitCode != 0) {
       throw new ExecutionException("Process exited with code : " + exitCode, new Throwable());
     }
-    return Joiner.on("\n").join(result);
+    return resultConverter.getResult(Joiner.on("\n").join(result));
   }
 
   @Override
-  public String get(long timeout, TimeUnit unit)
+  public T get(long timeout, TimeUnit unit)
       throws InterruptedException, ExecutionException, TimeoutException {
+    // whatever, we can implement this later
     throw new UnsupportedOperationException("Process.waitFor has handing in java8, wait till then");
   }
 

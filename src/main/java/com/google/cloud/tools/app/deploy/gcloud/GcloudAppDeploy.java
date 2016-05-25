@@ -19,90 +19,76 @@ package com.google.cloud.tools.app.deploy.gcloud;
 import com.google.cloud.tools.app.api.AppEngineException;
 import com.google.cloud.tools.app.api.deploy.DeployConfiguration;
 import com.google.cloud.tools.app.deploy.Deploy;
+import com.google.cloud.tools.app.deploy.Deploy.DeployRequest;
+import com.google.cloud.tools.app.deploy.DeployResult;
 import com.google.cloud.tools.app.deploy.process.CliProcessStarter;
-import com.google.cloud.tools.app.deploy.process.LoggingOutputHandler;
+import com.google.cloud.tools.app.deploy.process.NullOutputHandler;
 import com.google.cloud.tools.app.deploy.process.OutputHandler;
 import com.google.cloud.tools.app.deploy.process.ProcessStarter;
 import com.google.cloud.tools.app.deploy.process.StreamConsumer;
 import com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
 
-public class GcloudAppDeploy implements Deploy {
+public class GcloudAppDeploy implements DeployRequest {
   private final CloudSdk sdk;
   private final ConfigurationTranslator<DeployConfiguration> configurationTranslator;
+  private final ProcessStarter processStarter;
+  private final DeployConfiguration config;
   private OutputHandler outputHandler;
-  private ProcessStarter processStarter;
 
   private GcloudAppDeploy(CloudSdk sdk,
       ConfigurationTranslator<DeployConfiguration> configurationTranslator,
-      ProcessStarter processStarter) {
+      ProcessStarter processStarter,
+      DeployConfiguration config) {
     this.sdk = sdk;
     this.processStarter = processStarter;
     this.configurationTranslator = configurationTranslator;
+    this.outputHandler = new NullOutputHandler();
+    this.config = config;
   }
 
   @Override
-  public Future<String> deploy(DeployConfiguration config) {
+  public Future<DeployResult> deploy() {
     try {
-      String[] command = sdk.createAppCommand("deploy", configurationTranslator.translate(config));
-      Process process = processStarter.startProcess(command);
+      String[] options = configurationTranslator.translate(config);
+      String[] command = makeAppDeployCommand(sdk, options); // or something, this is made up
 
-      if (outputHandler == null) {
-        outputHandler = new LoggingOutputHandler(GcloudAppDeploy.class.getName(), Level.INFO);
-      }
+      Process process = processStarter.startProcess(command);
       StreamConsumer.startNewConsumer(process.getErrorStream(), outputHandler);
 
-      return new GcloudFuture(process);
+      return new GcloudFuture<DeployResult>(process, new DeployResultConverter());
 
     } catch(IOException e) {
       throw new AppEngineException("Error deploying", e);
     }
   }
 
-  // It feels strange that this isn't part of the builder and is part of the deploy API? But I'm
-  // not sure what the right thing to do is. Should it be an implementation detail? or should the
-  // develop always have access to the output of the Deployer?
   @Override
-  public void setOutputHandler(OutputHandler outputHandler) {
-    this.outputHandler = outputHandler;
-  }
-
-  public static Builder newBuilder(CloudSdk sdk) {
-    // there's probably some work to get the sdk refactored as storage for path/environment and stuff
-    return new Builder(sdk);
-  }
+  public DeployRequest setStatusUpdater(OutputHandler handler) {
+    this.outputHandler = handler;
+    return this;
+  };
 
   // this will probably be similar for all commands, but I don't know how to
   // abstract it out yet, or if I even should?
-  public static class Builder {
+  public static class Builder implements Deploy.DeployRequestFactory {
     private CloudSdk sdk;
+    // maybe these two don't have to come from the environment at all?
     private ProcessStarter processStarter;
     private ConfigurationTranslator<DeployConfiguration> configurationTranslator;
 
-    private Builder(CloudSdk sdk) {
+    public Builder(CloudSdk sdk) {
       this.sdk = sdk;
       // getEnvironment doesn't exist
       this.processStarter = CliProcessStarter.newBuilder().environment(sdk.getEnvironment()).build();
       this.configurationTranslator = new GcloudAppDeployTranslator();
     }
 
-    public Builder processStarter(ProcessStarter processStarter) {
-      this.processStarter = processStarter;
-      return this;
-    }
-
-    public Builder configurationTranslator(
-        ConfigurationTranslator<DeployConfiguration> configurationTranslator) {
-      this.configurationTranslator = configurationTranslator;
-      return this;
-    }
-
-    public GcloudAppDeploy build() {
-      return new GcloudAppDeploy(sdk, configurationTranslator, processStarter);
+    @Override
+    public DeployRequest newDeploymentRequest(DeployConfiguration config) {
+      return new GcloudAppDeploy(sdk, configurationTranslator, processStarter, config);
     }
   }
 }

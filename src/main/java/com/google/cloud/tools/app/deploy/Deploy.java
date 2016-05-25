@@ -17,18 +17,32 @@
 package com.google.cloud.tools.app.deploy;
 
 import com.google.cloud.tools.app.api.deploy.DeployConfiguration;
+import com.google.cloud.tools.app.deploy.gcloud.GcloudAppDeploy;
 import com.google.cloud.tools.app.deploy.process.OutputHandler;
+import com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk;
 
 import java.util.concurrent.Future;
 
-// this is the API to deploy, it's assumed to be asynchronous and returns
-// a future to manipulate the process
+/**
+ * Created by appu on 5/24/16.
+ */
+public class Deploy {
 
-public interface Deploy {
+  // If there's a good way to configure the cloud SDK here instead of
+  // providing an object, we can explore that.
+  public static DeployRequestFactory newRequestFactory(CloudSdk sdk) {
+    return new GcloudAppDeploy.Builder(sdk);
+  }
 
-  Future<String> deploy(DeployConfiguration config);
+  private Deploy() {
+  }
 
-  // should this be part of the API? Getting non-result related output?
-  void setOutputHandler(OutputHandler handler);
+  public interface DeployRequestFactory {
+    DeployRequest newDeploymentRequest(DeployConfiguration config);
+  }
 
+  public interface DeployRequest {
+    DeployRequest setStatusUpdater(OutputHandler handler);
+    Future<DeployResult> deploy();
+  }
 }

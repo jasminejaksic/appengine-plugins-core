@@ -24,13 +24,13 @@ import java.util.Map;
 // does give the shutdown hook option though
 public class CliProcessStarter implements ProcessStarter {
 
-  private final boolean enableShutdownHook;
+  private final boolean disableShutdownHook;
   private final Map<String, String> environment;
   private Process process;
 
-  private CliProcessStarter(Map<String, String> environment, boolean enableShutdownHook) {
+  private CliProcessStarter(Map<String, String> environment, boolean disableShutdownHook) {
     this.environment = environment;
-    this.enableShutdownHook = enableShutdownHook;
+    this.disableShutdownHook = disableShutdownHook;
   }
 
   @Override
@@ -39,7 +39,7 @@ public class CliProcessStarter implements ProcessStarter {
     pb.environment().putAll(environment);
     process = pb.start();
 
-    if (enableShutdownHook) {
+    if (!disableShutdownHook) {
       Runtime.getRuntime().addShutdownHook(new Thread("destroy-process") {
         @Override
         public void run() {
@@ -58,13 +58,13 @@ public class CliProcessStarter implements ProcessStarter {
   }
 
   public static class Builder {
-    private boolean enableShutdownHook = false;
+    private boolean disableShutdownHook;
     private Map<String, String> environment = Collections.emptyMap();
 
     private Builder() {}
 
-    public Builder enableShutdownHook() {
-      enableShutdownHook = true;
+    public Builder disableShutdownHook() {
+      disableShutdownHook = true;
       return this;
     }
 
@@ -74,7 +74,7 @@ public class CliProcessStarter implements ProcessStarter {
     }
 
     public CliProcessStarter build() {
-      return new CliProcessStarter(environment, enableShutdownHook);
+      return new CliProcessStarter(environment, disableShutdownHook);
     }
 
   }
