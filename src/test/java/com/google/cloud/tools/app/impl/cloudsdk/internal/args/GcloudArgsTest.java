@@ -77,6 +77,6 @@ public class GcloudArgsTest {
     assertEquals(Collections.singletonList("v1=0.2,v2=0.3,v3=0.5"),
         GcloudArgs.get(versionToTrafficSplitMapping));
 
-    assertEquals(Collections.emptyList(), GcloudArgs.get(null));
+    assertEquals(Collections.emptyList(), GcloudArgs.get(Collections.emptyMap()));
   }
 }

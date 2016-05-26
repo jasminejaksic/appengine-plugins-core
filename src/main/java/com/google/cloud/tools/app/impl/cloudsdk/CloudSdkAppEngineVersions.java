@@ -63,6 +63,7 @@ public class CloudSdkAppEngineVersions implements AppEngineVersions {
     arguments.add("start");
     arguments.addAll(configuration.getVersions());
     arguments.addAll(GcloudArgs.get("service", configuration.getService()));
+    arguments.addAll(GcloudArgs.get(configuration));
 
     execute(arguments);
   }
@@ -82,6 +83,7 @@ public class CloudSdkAppEngineVersions implements AppEngineVersions {
     arguments.add("stop");
     arguments.addAll(configuration.getVersions());
     arguments.addAll(GcloudArgs.get("service", configuration.getService()));
+    arguments.addAll(GcloudArgs.get(configuration));
 
     execute(arguments);
   }

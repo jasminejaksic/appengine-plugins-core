@@ -46,7 +46,8 @@ public class CloudSdkAppEngineVersionsTest {
     CloudSdkAppEngineVersions appEngineVersion = new CloudSdkAppEngineVersions(sdk);
     appEngineVersion.start(getVersionConfig());
 
-    List<String> args = Arrays.asList("versions", "start", "v1", "v2", "--service", "myService");
+    List<String> args = Arrays.asList(
+        "versions", "start", "v1", "v2", "--service", "myService", "--project", "myProject");
 
     verify(sdk, times(1)).runAppCommand(eq(args));
   }
@@ -56,7 +57,8 @@ public class CloudSdkAppEngineVersionsTest {
     CloudSdkAppEngineVersions appEngineVersion = new CloudSdkAppEngineVersions(sdk);
     appEngineVersion.stop(getVersionConfig());
 
-    List<String> args = Arrays.asList("versions", "stop", "v1", "v2", "--service", "myService");
+    List<String> args = Arrays.asList(
+        "versions", "stop", "v1", "v2", "--service", "myService", "--project", "myProject");
 
     verify(sdk, times(1)).runAppCommand(eq(args));
   }
@@ -96,6 +98,7 @@ public class CloudSdkAppEngineVersionsTest {
   private DefaultVersionsSelectionConfiguration getVersionConfig() {
     DefaultVersionsSelectionConfiguration configuration = new DefaultVersionsSelectionConfiguration();
     configuration.setVersions(Arrays.asList("v1", "v2"));
+    configuration.setProject("myProject");
     configuration.setService("myService");
     return configuration;
   }

@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.app.api.versions;
-
-import com.google.cloud.tools.app.api.Configuration;
-
-import java.util.Collection;
+package com.google.cloud.tools.app.api;
 
 /**
- * Identifies a version or a set of versions for use in {@link AppEngineVersions}.
+ * Common configuration elements.
  */
-public interface VersionsSelectionConfiguration extends Configuration {
+public interface Configuration {
 
-  Collection<String> getVersions();
-
-  String getService();
+  String getProject();
 }
