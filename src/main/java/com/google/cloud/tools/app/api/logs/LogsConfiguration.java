@@ -16,10 +16,12 @@
 
 package com.google.cloud.tools.app.api.logs;
 
+import com.google.cloud.tools.app.api.Configuration;
+
 /**
  * Identifies an application for use in {@link AppEngineLogs}.
  */
-public interface LogsConfiguration {
+public interface LogsConfiguration extends Configuration {
 
   String getLevel();
 
