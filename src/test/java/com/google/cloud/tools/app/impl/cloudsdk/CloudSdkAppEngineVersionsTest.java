@@ -68,7 +68,8 @@ public class CloudSdkAppEngineVersionsTest {
     CloudSdkAppEngineVersions appEngineVersion = new CloudSdkAppEngineVersions(sdk);
     appEngineVersion.delete(getVersionConfig());
 
-    List<String> args = Arrays.asList("versions", "delete", "v1", "v2", "--service", "myService");
+    List<String> args = Arrays.asList("versions", "delete", "v1", "v2", "--service", "myService",
+        "--project", "myProject");
 
     verify(sdk, times(1)).runAppCommand(eq(args));
   }
@@ -79,7 +80,8 @@ public class CloudSdkAppEngineVersionsTest {
     appEngineVersion.list(getListConfig(true));
 
     List<String> args = Arrays
-        .asList("versions", "list", "--service", "myService", "--hide-no-traffic");
+        .asList("versions", "list", "--service", "myService", "--hide-no-traffic", "--project",
+            "myProject");
 
     verify(sdk, times(1)).runAppCommand(eq(args));
   }
@@ -90,7 +92,8 @@ public class CloudSdkAppEngineVersionsTest {
     appEngineVersion.list(getListConfig(false));
 
     List<String> args = Arrays
-        .asList("versions", "list", "--service", "myService", "--no-hide-no-traffic");
+        .asList("versions", "list", "--service", "myService", "--no-hide-no-traffic", "--project",
+            "myProject");
 
     verify(sdk, times(1)).runAppCommand(eq(args));
   }
@@ -106,6 +109,7 @@ public class CloudSdkAppEngineVersionsTest {
   private DefaultVersionsListConfiguration getListConfig(boolean hideNoTraffic) {
     DefaultVersionsListConfiguration listConfiguration = new DefaultVersionsListConfiguration();
     listConfiguration.setService("myService");
+    listConfiguration.setProject("myProject");
     listConfiguration.setHideNoTraffic(hideNoTraffic);
     return listConfiguration;
   }
