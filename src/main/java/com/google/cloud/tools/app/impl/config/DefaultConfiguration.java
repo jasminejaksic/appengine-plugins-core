@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.app.api;
+package com.google.cloud.tools.app.impl.config;
+
+import com.google.cloud.tools.app.api.Configuration;
 
 /**
  * Base implementation for common configuration elements.

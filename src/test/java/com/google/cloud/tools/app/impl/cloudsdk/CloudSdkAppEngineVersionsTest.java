@@ -98,8 +98,8 @@ public class CloudSdkAppEngineVersionsTest {
   private DefaultVersionsSelectionConfiguration getVersionConfig() {
     DefaultVersionsSelectionConfiguration configuration = new DefaultVersionsSelectionConfiguration();
     configuration.setVersions(Arrays.asList("v1", "v2"));
-    configuration.setProject("myProject");
     configuration.setService("myService");
+    configuration.setProject("myProject");
     return configuration;
   }
 

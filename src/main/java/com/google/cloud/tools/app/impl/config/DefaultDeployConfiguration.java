@@ -14,7 +14,6 @@
 
 package com.google.cloud.tools.app.impl.config;
 
-import com.google.cloud.tools.app.api.DefaultConfiguration;
 import com.google.cloud.tools.app.api.deploy.DeployConfiguration;
 
 import java.io.File;
