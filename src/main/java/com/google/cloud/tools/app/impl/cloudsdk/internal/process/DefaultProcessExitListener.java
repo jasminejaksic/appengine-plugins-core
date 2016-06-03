@@ -19,8 +19,10 @@ package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 /**
  * Default process exit listener that simply captures the exit code and makes it available with a
  * getter. Before the process exit code is captured, it's initialized to -1.
+ *
+ * <p>When used with {@link com.google.cloud.tools.app.impl.cloudsdk.internal.sdk.CloudSdk.Builder},
+ * this allows checking of the success or failure of an action execution.
  */
-// TODO: Justify existence. What is this class for?
 public class DefaultProcessExitListener implements ProcessExitListener {
   private int exitCode = -1;
 
