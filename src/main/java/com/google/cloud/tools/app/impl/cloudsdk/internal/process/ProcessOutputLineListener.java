@@ -22,7 +22,7 @@ package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 public interface ProcessOutputLineListener {
 
   /**
-   * This is called when the process outputs a line to stderr or stdout.
+   * Called once per output line.
    */
   void onOutputLine(String line);
 }
