@@ -17,8 +17,7 @@
 package com.google.cloud.tools.app.impl.cloudsdk.internal.process;
 
 /**
- * Process listener that can be used with {@link DefaultProcessRunner} to read the merged stdout
- * and stderr line by line.
+ * Line output listener for {@link DefaultProcessRunner}.
  */
 public interface ProcessOutputLineListener {
 
