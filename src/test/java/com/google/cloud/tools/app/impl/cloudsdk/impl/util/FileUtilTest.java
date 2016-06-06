@@ -105,4 +105,14 @@ public class FileUtilTest {
     thrown.expect(IllegalArgumentException.class);
     FileUtil.copyDirectory(dir, dir);
   }
+
+  @Test
+  public void testCopyDirectory_childPath() throws IOException {
+    Path src = testDir.newFolder().toPath();
+    Path dest = Files.createDirectory(src.resolve("subdir"));
+
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("destination is child of source");
+    FileUtil.copyDirectory(src, dest);
+  }
 }

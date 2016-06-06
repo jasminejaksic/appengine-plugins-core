@@ -21,14 +21,11 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.nio.file.CopyOption;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.AclFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.PosixFileAttributeView;
-import java.nio.file.attribute.PosixFileAttributes;
 
 /**
  * Internal file utilities.
@@ -36,10 +33,10 @@ import java.nio.file.attribute.PosixFileAttributes;
 public class FileUtil {
 
   /**
-   * We really want to preserve file attributes and permissions on linux and windows.
+   * Implementation of recursive directory copy, does NOT overwrite
    *
-   * @param source an existing source directory to copy from
-   * @param destination an existing destination directory to copy to
+   * @param source an existing source directory to copy from.
+   * @param destination an existing destination directory to copy to.
    */
   public static void copyDirectory(final Path source, final Path destination) throws IOException {
     Preconditions.checkNotNull(source);
@@ -47,8 +44,9 @@ public class FileUtil {
     Preconditions.checkArgument(Files.isDirectory(source));
     Preconditions.checkArgument(Files.isDirectory(destination));
     Preconditions.checkArgument(!source.equals(destination));
+    Preconditions.checkArgument(!destination.startsWith(source), "destination is child of source");
 
-    Files.walkFileTree(source, new FileVisitor<Path>() {
+    Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
       final CopyOption[] copyOptions = new CopyOption[] { StandardCopyOption.COPY_ATTRIBUTES };
 
       @Override
@@ -59,49 +57,15 @@ public class FileUtil {
           return FileVisitResult.CONTINUE;
         }
 
-        copyWithAttributesAndPermissions(dir, destination.resolve(source.relativize(dir)));
+        Files.copy(dir, destination.resolve(source.relativize(dir)), copyOptions);
         return FileVisitResult.CONTINUE;
       }
 
       @Override
       public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 
-        copyWithAttributesAndPermissions(file, destination.resolve(source.relativize(file)));
+        Files.copy(file, destination.resolve(source.relativize(file)), copyOptions);
         return FileVisitResult.CONTINUE;
-      }
-
-      @Override
-      public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-        throw exc;
-      }
-
-      @Override
-      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        if (exc != null) {
-          throw exc;
-        }
-        return FileVisitResult.CONTINUE;
-      }
-
-      private void copyWithAttributesAndPermissions(Path src, Path dest) throws IOException {
-        Path target = Files.copy(src, dest, copyOptions);
-
-        // windows acl attributes
-        AclFileAttributeView srcAcl = Files.getFileAttributeView(src, AclFileAttributeView.class);
-        if (srcAcl != null) {
-          Files.getFileAttributeView(target, AclFileAttributeView.class).setAcl(srcAcl.getAcl());
-        }
-
-        // posix attributes
-        PosixFileAttributeView srcPosix = Files
-            .getFileAttributeView(src, PosixFileAttributeView.class);
-        if (srcPosix != null) {
-          PosixFileAttributes srcPosixAttr = srcPosix.readAttributes();
-          PosixFileAttributeView destPosix = Files
-              .getFileAttributeView(target, PosixFileAttributeView.class);
-          destPosix.setPermissions(srcPosixAttr.permissions());
-          destPosix.setGroup(srcPosixAttr.group());
-        }
       }
     });
 
