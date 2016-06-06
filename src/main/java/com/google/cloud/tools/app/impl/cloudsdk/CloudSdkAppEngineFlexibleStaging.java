@@ -19,8 +19,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import com.google.cloud.tools.app.api.AppEngineException;
 import com.google.cloud.tools.app.api.deploy.AppEngineFlexibleStaging;
 import com.google.cloud.tools.app.api.deploy.StageFlexibleConfiguration;
+import com.google.cloud.tools.app.impl.cloudsdk.internal.util.FileUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,19 +60,17 @@ public class CloudSdkAppEngineFlexibleStaging implements AppEngineFlexibleStagin
 
     try {
 
+      // Copy docker context to staging
+      if (config.getDockerDirectory() != null && config.getDockerDirectory().exists()) {
+        FileUtil.copyDirectory(config.getDockerDirectory().toPath(),
+            config.getStagingDirectory().toPath());
+      }
+
       // Copy app.yaml to staging.
       if (config.getAppYaml() != null && config.getAppYaml().exists()) {
         Files.copy(config.getAppYaml().toPath(),
             config.getStagingDirectory().toPath()
                 .resolve(config.getAppYaml().toPath().getFileName()),
-            REPLACE_EXISTING);
-      }
-
-      // Copy Dockerfile to staging.
-      if (config.getDockerfile() != null && config.getDockerfile().exists()) {
-        Files.copy(config.getDockerfile().toPath(),
-            config.getStagingDirectory().toPath()
-                .resolve(config.getDockerfile().toPath().getFileName()),
             REPLACE_EXISTING);
       }
 
