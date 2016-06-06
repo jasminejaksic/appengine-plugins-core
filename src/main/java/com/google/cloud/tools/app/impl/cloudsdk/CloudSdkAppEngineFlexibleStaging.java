@@ -49,17 +49,21 @@ public class CloudSdkAppEngineFlexibleStaging implements AppEngineFlexibleStagin
 
     if (!config.getStagingDirectory().exists()) {
       throw new AppEngineException("Staging directory does not exist. Location: "
-          + config.getStagingDirectory().toPath().toString());
+          + config.getStagingDirectory().toPath());
     }
     if (!config.getStagingDirectory().isDirectory()) {
       throw new AppEngineException("Staging location is not a directory. Location: "
-          + config.getStagingDirectory().toPath().toString());
+          + config.getStagingDirectory().toPath());
     }
 
     try {
 
       // Copy docker context to staging
       if (config.getDockerDirectory() != null && config.getDockerDirectory().exists()) {
+        if (!Files.isRegularFile(config.getDockerDirectory().toPath().resolve("dockerfile"))) {
+          throw new AppEngineException("Docker directory " + config.getDockerDirectory().toPath()
+              + " does not contain dockerfile");
+        }
         FileUtil.copyDirectory(config.getDockerDirectory().toPath(),
             config.getStagingDirectory().toPath());
       }
