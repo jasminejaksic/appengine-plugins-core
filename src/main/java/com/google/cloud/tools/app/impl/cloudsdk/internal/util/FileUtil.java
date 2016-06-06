@@ -30,10 +30,14 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 
+/**
+ * Internal file utilities.
+ */
 public class FileUtil {
 
   /**
-   * We really want to preserve file attributes and permissions on linux and windows
+   * We really want to preserve file attributes and permissions on linux and windows.
+   *
    * @param source an existing source directory to copy from
    * @param destination an existing destination directory to copy to
    */
@@ -73,7 +77,9 @@ public class FileUtil {
 
       @Override
       public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        if (exc != null) throw exc;
+        if (exc != null) {
+          throw exc;
+        }
         return FileVisitResult.CONTINUE;
       }
 
@@ -96,7 +102,6 @@ public class FileUtil {
           destPosix.setPermissions(srcPosixAttr.permissions());
           destPosix.setGroup(srcPosixAttr.group());
         }
-
       }
     });
 

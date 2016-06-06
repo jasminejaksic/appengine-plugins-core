@@ -23,8 +23,6 @@ import com.google.cloud.tools.app.impl.cloudsdk.internal.util.FileUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
