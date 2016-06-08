@@ -60,9 +60,9 @@ public class CloudSdkAppEngineFlexibleStaging implements AppEngineFlexibleStagin
 
       // Copy docker context to staging
       if (config.getDockerDirectory() != null && config.getDockerDirectory().exists()) {
-        if (!Files.isRegularFile(config.getDockerDirectory().toPath().resolve("dockerfile"))) {
+        if (!Files.isRegularFile(config.getDockerDirectory().toPath().resolve("Dockerfile"))) {
           throw new AppEngineException("Docker directory " + config.getDockerDirectory().toPath()
-              + " does not contain dockerfile");
+              + " does not contain Dockerfile");
         }
         FileUtil.copyDirectory(config.getDockerDirectory().toPath(),
             config.getStagingDirectory().toPath());
