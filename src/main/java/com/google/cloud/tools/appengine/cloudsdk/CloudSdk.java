@@ -43,7 +43,8 @@ import javax.annotation.Nullable;
  */
 public class CloudSdk {
 
-  private static final Logger log = Logger.getLogger(CloudSdk.class.toString());
+  private static final Logger logger = Logger.getLogger(CloudSdk.class.toString());
+  private static final Joiner WHITESPACE_JOINER = Joiner.on(" ");
 
   // TODO : does this continue to work on windows?
   private static final String GCLOUD = "bin/gcloud";
@@ -110,22 +111,17 @@ public class CloudSdk {
     command.add("--quiet");
 
     Map<String, String> environment = Maps.newHashMap();
-
     if (appCommandCredentialFile != null) {
       command.addAll(GcloudArgs.get("credential-file-override", appCommandCredentialFile));
       environment.put("CLOUDSDK_APP_USE_GSUTIL", "0");
     }
-    command.addAll(GcloudArgs.get("format", appCommandOutputFormat));
-
-    outputCommand(command);
-
     if (appCommandMetricsEnvironment != null) {
       environment.put("CLOUDSDK_METRICS_ENVIRONMENT", appCommandMetricsEnvironment);
     }
     if (appCommandMetricsEnvironmentVersion != null) {
       environment.put("CLOUDSDK_METRICS_ENVIRONMENT_VERSION", appCommandMetricsEnvironmentVersion);
     }
-
+    logCommand(command);
     processRunner.setEnvironment(environment);
     processRunner.run(command.toArray(new String[command.size()]));
   }
@@ -141,7 +137,7 @@ public class CloudSdk {
     command.add(getDevAppServerPath().toString());
     command.addAll(args);
 
-    outputCommand(command);
+    logCommand(command);
 
     processRunner.run(command.toArray(new String[command.size()]));
 
@@ -166,14 +162,13 @@ public class CloudSdk {
     command.add("com.google.appengine.tools.admin.AppCfg");
     command.addAll(args);
 
-    outputCommand(command);
+    logCommand(command);
 
     processRunner.run(command.toArray(new String[command.size()]));
   }
 
-  private void outputCommand(List<String> command) {
-    Joiner joiner = Joiner.on(" ");
-    log.info("submitting command: " + joiner.join(command));
+  private void logCommand(List<String> command) {
+    logger.info("submitting command: " + WHITESPACE_JOINER.join(command));
   }
 
   private Path getSdkPath() {
