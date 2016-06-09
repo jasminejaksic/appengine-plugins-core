@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
+
 /**
  * Cloud SDK CLI wrapper.
  */
@@ -54,16 +56,15 @@ public class CloudSdk {
   private final ProcessRunner processRunner;
   private final String appCommandMetricsEnvironment;
   private final String appCommandMetricsEnvironmentVersion;
-  private final Integer appCommandGsUtil;
-  private final File appCommandCredentialFile;
+  @Nullable private final File appCommandCredentialFile;
   private final String appCommandOutputFormat;
   private final int runDevAppServerWaitSeconds;
   private final WaitingProcessOutputLineListener runDevAppServerWaitListener;
 
 
   private CloudSdk(Path sdkPath, String appCommandMetricsEnvironment,
-                   String appCommandMetricsEnvironmentVersion, Integer appCommandGsUtil,
-                   File appCommandCredentialFile, String appCommandOutputFormat, boolean async,
+                   String appCommandMetricsEnvironmentVersion,
+                   @Nullable File appCommandCredentialFile, String appCommandOutputFormat, boolean async,
                    List<ProcessOutputLineListener> stdOutLineListeners,
                    List<ProcessOutputLineListener> stdErrLineListeners,
                    ProcessExitListener exitListener, ProcessStartListener startListener,
@@ -71,7 +72,6 @@ public class CloudSdk {
     this.sdkPath = sdkPath;
     this.appCommandMetricsEnvironment = appCommandMetricsEnvironment;
     this.appCommandMetricsEnvironmentVersion = appCommandMetricsEnvironmentVersion;
-    this.appCommandGsUtil = appCommandGsUtil;
     this.appCommandCredentialFile = appCommandCredentialFile;
     this.appCommandOutputFormat = appCommandOutputFormat;
 
@@ -107,20 +107,22 @@ public class CloudSdk {
     command.addAll(args);
 
     command.add("--quiet");
-    command.addAll(GcloudArgs.get("credential-file-override", appCommandCredentialFile));
+
+    Map<String, String> environment = Maps.newHashMap();
+
+    if (appCommandCredentialFile != null) {
+      command.addAll(GcloudArgs.get("credential-file-override", appCommandCredentialFile));
+      environment.put("CLOUDSDK_APP_USE_GSUTIL", "0");
+    }
     command.addAll(GcloudArgs.get("format", appCommandOutputFormat));
 
     outputCommand(command);
 
-    Map<String, String> environment = Maps.newHashMap();
     if (appCommandMetricsEnvironment != null) {
       environment.put("CLOUDSDK_METRICS_ENVIRONMENT", appCommandMetricsEnvironment);
     }
     if (appCommandMetricsEnvironmentVersion != null) {
       environment.put("CLOUDSDK_METRICS_ENVIRONMENT_VERSION", appCommandMetricsEnvironmentVersion);
-    }
-    if (appCommandGsUtil != null) {
-      environment.put("CLOUDSDK_APP_USE_GSUTIL", String.valueOf(appCommandGsUtil));
     }
 
     processRunner.setEnvironment(environment);
@@ -197,8 +199,7 @@ public class CloudSdk {
     private Path sdkPath;
     private String appCommandMetricsEnvironment;
     private String appCommandMetricsEnvironmentVersion;
-    private Integer appCommandGsUtil;
-    private File appCommandCredentialFile;
+    @Nullable private File appCommandCredentialFile;
     private String appCommandOutputFormat;
     private boolean async = false;
     private List<ProcessOutputLineListener> stdOutLineListeners = new ArrayList<>();
@@ -232,14 +233,6 @@ public class CloudSdk {
     public Builder appCommandMetricsEnvironmentVersion(
         String appCommandMetricsEnvironmentVersion) {
       this.appCommandMetricsEnvironmentVersion = appCommandMetricsEnvironmentVersion;
-      return this;
-    }
-
-    /**
-     * Configures usage of gsutil.
-     */
-    public Builder appCommandGsUtil(Integer appCommandGsUtil) {
-      this.appCommandGsUtil = appCommandGsUtil;
       return this;
     }
 
@@ -330,7 +323,7 @@ public class CloudSdk {
       }
 
       return new CloudSdk(sdkPath, appCommandMetricsEnvironment,
-          appCommandMetricsEnvironmentVersion, appCommandGsUtil, appCommandCredentialFile,
+          appCommandMetricsEnvironmentVersion, appCommandCredentialFile,
           appCommandOutputFormat, async, stdOutLineListeners, stdErrLineListeners, exitListener,
           startListener, runDevAppServerWaitSeconds);
     }
