@@ -64,7 +64,8 @@ public class CloudSdk {
 
   private CloudSdk(Path sdkPath, String appCommandMetricsEnvironment,
                    String appCommandMetricsEnvironmentVersion,
-                   @Nullable File appCommandCredentialFile, String appCommandOutputFormat, boolean async,
+                   @Nullable File appCommandCredentialFile, String appCommandOutputFormat,
+                   boolean async,
                    List<ProcessOutputLineListener> stdOutLineListeners,
                    List<ProcessOutputLineListener> stdErrLineListeners,
                    ProcessExitListener exitListener, ProcessStartListener startListener,
