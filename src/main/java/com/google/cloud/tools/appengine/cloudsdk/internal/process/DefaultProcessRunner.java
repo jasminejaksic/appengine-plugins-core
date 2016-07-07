@@ -45,7 +45,8 @@ public class DefaultProcessRunner implements ProcessRunner {
    *                            be inherited by parent process.
    * @param stdErrLineListeners Client consumers of process error output. If empty, output will be
    *                            inherited by parent process.
-   * @param exitListeners        Client consumer of process onExit event.
+   * @param exitListeners       Client consumers of process onExit event.
+   * @param startListeners      Client consumers of process onStart event.
    */
   public DefaultProcessRunner(boolean async, List<ProcessOutputLineListener> stdOutLineListeners,
                               List<ProcessOutputLineListener> stdErrLineListeners,
