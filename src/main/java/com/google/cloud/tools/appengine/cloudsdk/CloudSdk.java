@@ -325,6 +325,7 @@ public class CloudSdk {
      * The client listener of the process exit with code.
      */
     public Builder exitListener(ProcessExitListener exitListener) {
+      this.exitListeners.clear();
       this.exitListeners.add(exitListener);
       return this;
     }
@@ -333,6 +334,7 @@ public class CloudSdk {
      * The client listener of the process start. Allows access to the underlying process.
      */
     public Builder startListener(ProcessStartListener startListener) {
+      this.startListeners.clear();
       this.startListeners.add(startListener);
       return this;
     }
