@@ -17,30 +17,34 @@
 package com.google.cloud.tools.appengine.v2.deploy;
 
 import com.google.cloud.tools.appengine.api.deploy.DefaultDeployConfiguration;
+import com.google.cloud.tools.appengine.cloudsdk.PathResolver;
 import com.google.cloud.tools.appengine.v2.AppEngine;
 import com.google.cloud.tools.appengine.v2.AppEngineRequestFactory;
 import com.google.cloud.tools.appengine.v2.internal.process.io.PrintStreamOutputHandler;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class DeployExample {
 
+  /**
+   * Example usage.
+   */
   public static void main(String[] args) {
 
     // perhaps we should be using builders for execute configurations
     DefaultDeployConfiguration config = new DefaultDeployConfiguration();
-    config.setDeployables(Collections.singletonList(new File("/tmp/test.sh")));
+    config.setDeployables(Collections.singletonList(new File("/tmp/app.yaml")));
 
     // the current implementation doesn't have a good hook in to the autodetection of the
     // cloud sdk.
     AppEngineRequestFactory requestFactory = AppEngine.newRequestFactory()
-        .cloudSdk(Paths.get("/path/to/cloudsk"))
+        //.cloudSdk(Paths.get("/path/to/cloudsk"))
         // or explicitly tell it to look for it
-        //.cloudSdk(new PathResolver().getCloudSdkPath()) //<<-- path resolver would go into the public API
+        .cloudSdk(
+            new PathResolver().getCloudSdkPath()) //<<-- path resolver would go into the public API
         .build();
 
     // do the execute,

@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.v2;
 
-//import com.google.cloud.tools.appengine.v2.internal.cloudsdk.CloudSdkAppEngineRequestFactory;
+import com.google.cloud.tools.appengine.v2.internal.cloudsdk.CloudSdkAppEngineRequestFactory;
 
 import java.nio.file.Path;
 
@@ -75,10 +75,10 @@ public class AppEngine {
      * Build a new {@link AppEngineRequestFactory} based on the builder configuration.
      */
     public AppEngineRequestFactory build() {
-//      if (factory == Factory.CLOUD_SDK) {
-//        return new CloudSdkAppEngineRequestFactory(cloudSdkHome, credentialFile,
-//            metricsEnvironment, metricsEnvironmentVersion);
-//      }
+      if (factory == Factory.CLOUD_SDK) {
+        return new CloudSdkAppEngineRequestFactory(cloudSdkHome, credentialFile,
+            metricsEnvironment, metricsEnvironmentVersion);
+      }
 
       throw new IllegalStateException("No App Engine request factory implementation defined");
     }
