@@ -204,15 +204,15 @@ public class CloudSdk {
     String cloudSdkPython = System.getenv("CLOUDSDK_PYTHON");
     if (cloudSdkPython != null) {
       Path cloudSdkPythonPath = Paths.get(cloudSdkPython);
-      if (Files.isExecutable(cloudSdkPythonPath)) {
+      if (Files.exists(cloudSdkPythonPath)) {
         return cloudSdkPythonPath;
       } else {
-        throw new InvalidPathException(cloudSdkPython, "python binary not executable");
+        throw new InvalidPathException(cloudSdkPython, "python binary not in specified location");
       }
     }
     
     Path pythonPath = getSdkPath().resolve(WINDOWS_BUNDLED_PYTHON);
-    if (Files.isExecutable(pythonPath)) {
+    if (Files.exists(pythonPath)) {
       return pythonPath;
     } else {
       return Paths.get("python");
