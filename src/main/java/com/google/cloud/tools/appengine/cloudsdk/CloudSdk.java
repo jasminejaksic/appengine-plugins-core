@@ -32,6 +32,7 @@ import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -129,8 +130,9 @@ public class CloudSdk {
   /**
    * Uses the process runner to execute a dev_appserver.py command.
    *
-   * @param args The arguments to pass to dev_appserver.py.
-   * @throws ProcessRunnerException When process runner encounters an error.
+   * @param args the arguments to pass to dev_appserver.py
+   * @throws InvalidPathException when Python can't be located
+   * @throws ProcessRunnerException when process runner encounters an error
    */
   public void runDevAppServerCommand(List<String> args) throws ProcessRunnerException {
     List<String> command = new ArrayList<>();
@@ -204,6 +206,8 @@ public class CloudSdk {
       Path cloudSdkPythonPath = Paths.get(cloudSdkPython);
       if (Files.isExecutable(cloudSdkPythonPath)) {
         return cloudSdkPythonPath;
+      } else {
+        throw new InvalidPathException(cloudSdkPython, "python binary not executable");
       }
     }
     
@@ -212,7 +216,8 @@ public class CloudSdk {
       return pythonPath;
     } else {
       return Paths.get("python");
-    }
+    } 
+
   }
 
   /**
