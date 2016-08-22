@@ -59,8 +59,8 @@ public class CloudSdk {
   private static final String JAVA_APPENGINE_SDK_PATH =
       "platform/google_appengine/google/appengine/tools/java/lib";
   private static final String JAVA_TOOLS_JAR = "appengine-tools-api.jar";
-  private static final String WINDOWS_BUNDLED_PYTHON = "platform/bundledpython/python.exe";
   private static final Map<String, Path> JAR_LOCATIONS = new HashMap<>();
+  private static final String WINDOWS_BUNDLED_PYTHON = "platform/bundledpython/python.exe";
 
   private final Path sdkPath;
   private final ProcessRunner processRunner;
@@ -196,8 +196,23 @@ public class CloudSdk {
     return getSdkPath().resolve(JAVA_APPENGINE_SDK_PATH);
   }
 
-  private Path getWindowsPythonPath() {
-    return getSdkPath().resolve(WINDOWS_BUNDLED_PYTHON);
+  // https://github.com/GoogleCloudPlatform/appengine-plugins-core/issues/189
+  @VisibleForTesting
+  Path getWindowsPythonPath() {
+    String cloudSdkPython = System.getenv("CLOUDSDK_PYTHON");
+    if (cloudSdkPython != null) {
+      Path cloudSdkPythonPath = Paths.get(cloudSdkPython);
+      if (Files.isExecutable(cloudSdkPythonPath)) {
+        return cloudSdkPythonPath;
+      }
+    }
+    
+    Path pythonPath = getSdkPath().resolve(WINDOWS_BUNDLED_PYTHON);
+    if (Files.isExecutable(pythonPath)) {
+      return pythonPath;
+    } else {
+      return Paths.get("python");
+    }
   }
 
   /**
@@ -461,7 +476,7 @@ public class CloudSdk {
       if (this.resolvers != null) {
         resolvers = new ArrayList<>(this.resolvers);
       } else {
-        // Explicitly specify classloader rather than use the Thread Context Class Loader (TCCL)
+        // Explicitly specify classloader rather than use the Thread Context Class Loader
         ServiceLoader<CloudSdkResolver> services =
             ServiceLoader.load(CloudSdkResolver.class, getClass().getClassLoader());
         resolvers = Lists.newArrayList(services);
