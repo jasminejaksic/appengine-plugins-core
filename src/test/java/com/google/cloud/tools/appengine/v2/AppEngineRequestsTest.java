@@ -26,14 +26,13 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class AppEngineTest {
+public class AppEngineRequestsTest {
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
@@ -54,12 +53,12 @@ public class AppEngineTest {
     exception.expect(IllegalStateException.class);
     exception.expectMessage("No App Engine request factory implementation defined");
 
-    AppEngine.newRequestFactory().build();
+    AppEngineRequests.newRequestFactoryBuilder().build();
   }
 
   @Test
   public void testNewRequestFactory_cloudSdk() {
-    AppEngineRequestFactory rf = AppEngine.newRequestFactory().cloudSdk(sdkHome).build();
+    AppEngineRequestFactory rf = AppEngineRequests.newRequestFactoryBuilder().cloudSdk(sdkHome).build();
     assertThat(rf, instanceOf(CloudSdkAppEngineRequestFactory.class));
   }
 

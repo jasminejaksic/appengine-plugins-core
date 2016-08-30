@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 /**
  * Entry point to generate {@link AppEngineRequestFactory}.
  */
-public class AppEngine {
-  public static AppEngineRequestFactoryBuilder newRequestFactory() {
+public class AppEngineRequests {
+  public static AppEngineRequestFactoryBuilder newRequestFactoryBuilder() {
     return new AppEngineRequestFactoryBuilder();
   }
 

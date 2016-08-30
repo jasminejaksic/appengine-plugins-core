@@ -18,7 +18,7 @@ package com.google.cloud.tools.appengine.v2.deploy;
 
 import com.google.cloud.tools.appengine.api.deploy.DefaultDeployConfiguration;
 import com.google.cloud.tools.appengine.cloudsdk.PathResolver;
-import com.google.cloud.tools.appengine.v2.AppEngine;
+import com.google.cloud.tools.appengine.v2.AppEngineRequests;
 import com.google.cloud.tools.appengine.v2.AppEngineRequestFactory;
 import com.google.cloud.tools.appengine.v2.internal.process.io.PrintStreamOutputHandler;
 
@@ -40,7 +40,7 @@ public class DeployExample {
 
     // the current implementation doesn't have a good hook in to the autodetection of the
     // cloud sdk.
-    AppEngineRequestFactory requestFactory = AppEngine.newRequestFactory()
+    AppEngineRequestFactory requestFactory = AppEngineRequests.newRequestFactoryBuilder()
         //.cloudSdk(Paths.get("/path/to/cloudsk"))
         // or explicitly tell it to look for it
         .cloudSdk(
