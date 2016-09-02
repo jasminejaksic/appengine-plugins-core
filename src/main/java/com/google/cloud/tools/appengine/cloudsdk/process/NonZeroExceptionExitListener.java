@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.cloudsdk.process;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
 
 /**
  * Exit listener that throws a {@link AppEngineException} on a non-zero exit value.

@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.cloudsdk;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.api.services.AppEngineServices;
 import com.google.cloud.tools.appengine.api.services.TrafficSplitConfiguration;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;

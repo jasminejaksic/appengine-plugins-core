@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.appengine.api.exceptions;
+package com.google.cloud.tools.appengine.api;
 
 /**
- * Signals an SDK location isn't a directory.
+ * Signals a given location isn't, or doesn't contain a file.
  */
-public class BadSdkLocationException extends AppEngineException {
-  public BadSdkLocationException(String message) {
+public class NotAFileException extends AppEngineException {
+  public NotAFileException(String message) {
     super(message);
   }
 }

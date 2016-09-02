@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.cloudsdk;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.api.versions.AppEngineVersions;
 import com.google.cloud.tools.appengine.api.versions.VersionsListConfiguration;
 import com.google.cloud.tools.appengine.api.versions.VersionsSelectionConfiguration;

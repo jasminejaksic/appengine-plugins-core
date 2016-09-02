@@ -16,10 +16,9 @@
 
 package com.google.cloud.tools.appengine.cloudsdk;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
-import com.google.cloud.tools.appengine.api.exceptions.BadSdkLocationException;
-import com.google.cloud.tools.appengine.api.exceptions.NotAFileException;
-import com.google.cloud.tools.appengine.api.exceptions.NullSdkPathException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.BadSdkLocationException;
+import com.google.cloud.tools.appengine.api.NotAFileException;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.DefaultProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunner;
@@ -240,7 +239,7 @@ public class CloudSdk {
    */
   public void validate() throws AppEngineException {
     if (sdkPath == null) {
-      throw new NullSdkPathException("Validation Error: SDK path is null");
+      throw new NullPointerException("Validation Error: SDK path is null");
     }
     if (!Files.isDirectory(sdkPath)) {
       throw new BadSdkLocationException(

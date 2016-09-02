@@ -14,7 +14,7 @@
 
 package com.google.cloud.tools.appengine.api.deploy;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
 
 /**
  * Main interface for deploying to App Engine.

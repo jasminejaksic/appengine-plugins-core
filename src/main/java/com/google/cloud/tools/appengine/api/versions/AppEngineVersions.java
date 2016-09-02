@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.api.versions;
 
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+import com.google.cloud.tools.appengine.api.AppEngineException;
 
 /**
  * This set of commands can be used to manage existing App Engine versions.

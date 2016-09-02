@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.appengine.api.exceptions;
+package com.google.cloud.tools.appengine.api;
 
 /**
  * API-level runtime exception for wrapping any failures in performing library operations.
