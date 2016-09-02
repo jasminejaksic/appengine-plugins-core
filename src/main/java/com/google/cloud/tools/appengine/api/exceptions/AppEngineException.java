@@ -35,13 +35,4 @@ public class AppEngineException extends RuntimeException {
   public AppEngineException(String message, Throwable cause) {
     super(message, cause);
   }
-
-  public enum ERROR_CODE {
-    NULL_SDK_PATH,
-    SDK_NOT_DIRECTORY,
-    GCLOUD_NOT_FILE,
-    DEVAPPSERVER_NOT_FILE,
-    GAE_SDK_NOT_DIRECTORY,
-
-  }
 }
