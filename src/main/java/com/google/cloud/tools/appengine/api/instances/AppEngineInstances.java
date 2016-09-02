@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.api.instances;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 
 /**
  * This set of commands can be used to manage existing App Engine instance.

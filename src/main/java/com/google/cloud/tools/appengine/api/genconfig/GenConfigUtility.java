@@ -14,7 +14,7 @@
 
 package com.google.cloud.tools.appengine.api.genconfig;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 
 /**
  * Utility for generating missing configuration files for a source directory.

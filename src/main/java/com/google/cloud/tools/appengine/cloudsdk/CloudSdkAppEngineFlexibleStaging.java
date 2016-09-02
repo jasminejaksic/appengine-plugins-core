@@ -18,7 +18,7 @@ package com.google.cloud.tools.appengine.cloudsdk;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 import com.google.cloud.tools.appengine.api.deploy.AppEngineFlexibleStaging;
 import com.google.cloud.tools.appengine.api.deploy.StageFlexibleConfiguration;
 import com.google.cloud.tools.appengine.cloudsdk.internal.FileUtil;

@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package com.google.cloud.tools.appengine.cloudsdk.process;
-
-import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
+package com.google.cloud.tools.appengine.api.exceptions;
 
 /**
- * Exit listener that throws a {@link AppEngineException} on a non-zero exit value.
+ * Signals a given location isn't, or doesn't contain a file.
  */
-// Is this being used by the clients?  I'm not a big fan of unused code and it has no tests.
-public class NonZeroExceptionExitListener implements ProcessExitListener {
-
-  @Override
-  public void onExit(int exitCode) {
-    if (exitCode != 0) {
-      throw new AppEngineException("Non zero exit: " + exitCode);
-    }
+public class NotAFileException extends AppEngineException {
+  public NotAFileException(String message) {
+    super(message);
   }
-
 }

@@ -16,7 +16,7 @@
 
 package com.google.cloud.tools.appengine.cloudsdk;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 import com.google.cloud.tools.appengine.api.genconfig.GenConfigParams;
 import com.google.cloud.tools.appengine.api.genconfig.GenConfigUtility;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;

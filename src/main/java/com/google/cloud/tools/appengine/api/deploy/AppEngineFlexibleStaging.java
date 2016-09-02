@@ -14,7 +14,7 @@
 
 package com.google.cloud.tools.appengine.api.deploy;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 
 /**
  * Main interface for staging Java application for App Engine flexible environment before

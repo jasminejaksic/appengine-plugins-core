@@ -14,7 +14,7 @@
 
 package com.google.cloud.tools.appengine.api.devserver;
 
-import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.api.exceptions.AppEngineException;
 
 /**
  * Interface for running App Engine Local Development Server.
