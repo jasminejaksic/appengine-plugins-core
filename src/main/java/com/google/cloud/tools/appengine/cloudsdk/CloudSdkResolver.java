@@ -18,8 +18,6 @@ package com.google.cloud.tools.appengine.cloudsdk;
 
 import java.nio.file.Path;
 
-import javax.annotation.Nonnull;
-
 /**
  * Resolve paths find the CloudSdk.
  */
@@ -30,7 +28,6 @@ public interface CloudSdkResolver {
    *
    * @return Path to Google Cloud SDK or null
    */
-  @Nonnull
   Path getCloudSdkPath();
 
   /**
