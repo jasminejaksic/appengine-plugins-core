@@ -59,6 +59,7 @@ public class CloudSdk {
   private static final String DEV_APPSERVER_PY = "bin/dev_appserver.py";
   private static final String JAVA_APPENGINE_SDK_PATH =
       "platform/google_appengine/google/appengine/tools/java/lib";
+  private static final String JAVA_COMPONENTS_PATH = "platform/gcd/.appengine";
   private static final String JAVA_TOOLS_JAR = "appengine-tools-api.jar";
   private static final Map<String, Path> JAR_LOCATIONS = new HashMap<>();
   private static final String WINDOWS_BUNDLED_PYTHON = "platform/bundledpython/python.exe";
@@ -181,6 +182,11 @@ public class CloudSdk {
   public Path getSdkPath() {
     return sdkPath;
   }
+  
+  // TODO does this work on windows?
+  Path getJavaAppEngineComponentsPath() {
+    return sdkPath.resolve(JAVA_COMPONENTS_PATH);
+  }
 
   private Path getGCloudPath() {
     String gcloud = GCLOUD;
@@ -261,6 +267,10 @@ public class CloudSdk {
       throw new AppEngineException(
           "Validation Error: Java Tools jar location '"
               + JAR_LOCATIONS.get(JAVA_TOOLS_JAR) + "' is not a file.");
+    }
+    if (!Files.isDirectory(getJavaAppEngineComponentsPath())) {
+      throw new AppEngineComponentsNotInstalledException(
+          "Validation Error: Java App Engine components not installed");
     }
   }
 

@@ -5,9 +5,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.google.cloud.tools.appengine.cloudsdk.CloudSdk.Builder;
-
 import com.google.cloud.tools.appengine.api.AppEngineException;
+import com.google.cloud.tools.appengine.cloudsdk.CloudSdk.Builder;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +45,12 @@ public class CloudSdkTest {
   public void testGetJavaAppEngineSdkPath() {
     assertEquals(root.resolve("platform/google_appengine/google/appengine/tools/java/lib"),
         builder.build().getJavaAppEngineSdkPath());
+  }
+  
+  @Test
+  public void testGetJavaAppEngineComponentsPath() {
+    assertEquals(root.resolve("platform/gcd/.appengine"),
+        builder.build().getJavaAppEngineComponentsPath());
   }
 
   @Test
