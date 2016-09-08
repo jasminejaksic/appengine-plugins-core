@@ -30,6 +30,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -46,11 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * Cloud SDK CLI wrapper.
@@ -133,6 +133,8 @@ public class CloudSdk {
   }
 
   /**
+   * Checks whether the specified component is installed in the local environment.
+   * 
    * @return true iff the specified component is installed in the local environment
    */
   public boolean isComponentInstalled(String id) throws ProcessRunnerException {
