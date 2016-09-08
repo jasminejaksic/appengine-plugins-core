@@ -18,6 +18,7 @@ package com.google.cloud.tools.appengine.cloudsdk;
 
 import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;
+import com.google.cloud.tools.appengine.cloudsdk.internal.process.AccumulatingLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.DefaultProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunnerException;
@@ -70,7 +71,8 @@ public class CloudSdk {
   @Nullable
   private final File appCommandCredentialFile;
   private final String appCommandOutputFormat;
-  private final WaitingProcessOutputLineListener runDevAppServerWaitListener;
+  private final WaitingProcessOutputLineListener outputLineListener;
+  private final AccumulatingLineListener stdOutput;
 
   private CloudSdk(Path sdkPath,
                    String appCommandMetricsEnvironment,
@@ -78,14 +80,16 @@ public class CloudSdk {
                    @Nullable File appCommandCredentialFile,
                    String appCommandOutputFormat,
                    ProcessRunner processRunner,
-                   WaitingProcessOutputLineListener runDevAppServerWaitListener) {
+                   WaitingProcessOutputLineListener outputLineListener,
+                   AccumulatingLineListener stdOutput) {
     this.sdkPath = sdkPath;
     this.appCommandMetricsEnvironment = appCommandMetricsEnvironment;
     this.appCommandMetricsEnvironmentVersion = appCommandMetricsEnvironmentVersion;
     this.appCommandCredentialFile = appCommandCredentialFile;
     this.appCommandOutputFormat = appCommandOutputFormat;
     this.processRunner = processRunner;
-    this.runDevAppServerWaitListener = runDevAppServerWaitListener;
+    this.outputLineListener = outputLineListener;
+    this.stdOutput = stdOutput;
 
     // Populate jar locations.
     // TODO(joaomartins): Consider case where SDK doesn't contain these jars. Only App Engine
@@ -100,7 +104,7 @@ public class CloudSdk {
   /**
    * Uses the process runner to execute the gcloud app command with the provided arguments.
    *
-   * @param args The arguments to pass to "gcloud app" command.
+   * @param args the arguments to pass to "gcloud app" command
    */
   public void runAppCommand(List<String> args) throws ProcessRunnerException {
     List<String> command = new ArrayList<>();
@@ -108,7 +112,6 @@ public class CloudSdk {
     command.add("app");
     command.addAll(args);
 
-    command.add("--quiet");
     command.addAll(GcloudArgs.get("format", appCommandOutputFormat));
 
     Map<String, String> environment = Maps.newHashMap();
@@ -125,6 +128,31 @@ public class CloudSdk {
     logCommand(command);
     processRunner.setEnvironment(environment);
     processRunner.run(command.toArray(new String[command.size()]));
+    processRunner.run(command.toArray(new String[command.size()]));
+  }
+
+  /**
+   * @return true iff the specified component is installed in the local environment
+   */
+  public boolean isComponentInstalled(String id) throws ProcessRunnerException {
+    List<String> command = new ArrayList<>();
+    command.add(getGCloudPath().toString());
+    command.add("components");
+    command.add("list");
+    command.add("--format=json");
+    command.add("--filter=id:" + id);
+    
+    if (stdOutput == null) {
+      throw new IllegalStateException("won't be able to read output");
+    }
+    
+    stdOutput.clear();
+    processRunner.run(command.toArray(new String[command.size()]));
+    
+    String json = stdOutput.getOutput(); 
+    
+    // todo: parse the JSON
+    return json.contains("\"name\": \"Installed\"");
   }
 
   /**
@@ -149,8 +177,8 @@ public class CloudSdk {
     processRunner.run(command.toArray(new String[command.size()]));
 
     // wait for start if configured
-    if (runDevAppServerWaitListener != null) {
-      runDevAppServerWaitListener.await();
+    if (outputLineListener != null) {
+      outputLineListener.await();
     }
   }
 
@@ -266,7 +294,7 @@ public class CloudSdk {
 
   @VisibleForTesting
   WaitingProcessOutputLineListener getRunDevAppServerWaitListener() {
-    return runDevAppServerWaitListener;
+    return outputLineListener;
   }
 
   public static class Builder {
@@ -415,10 +443,14 @@ public class CloudSdk {
 
       // Verify there aren't listeners if subprocess inherits output.
       // If output is inherited, then listeners won't receive anything.
+      AccumulatingLineListener stdOut = null;
       if (inheritProcessOutput
           && (stdOutLineListeners.size() > 0 || stdErrLineListeners.size() > 0)) {
         throw new AppEngineException("You cannot specify subprocess output inheritance and"
             + " output listeners.");
+      } else {
+        stdOut = new AccumulatingLineListener();
+        stdOutLineListeners.add(stdOut);
       }
 
       // Construct process runner.
@@ -445,7 +477,7 @@ public class CloudSdk {
 
       return new CloudSdk(sdkPath, appCommandMetricsEnvironment,
           appCommandMetricsEnvironmentVersion, appCommandCredentialFile, appCommandOutputFormat,
-          processRunner, runDevAppServerWaitListener);
+          processRunner, runDevAppServerWaitListener, stdOut);
     }
 
     /**
@@ -528,4 +560,5 @@ public class CloudSdk {
     }
 
   }
+
 }
