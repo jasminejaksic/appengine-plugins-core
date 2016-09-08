@@ -74,7 +74,7 @@ public class CloudSdkTest {
     CloudSdk sdk = builder.build();
 
     assertNotNull(sdk.getRunDevAppServerWaitListener());
-    assertEquals(2, builder.getStdOutLineListeners().size());
+    assertEquals(3, builder.getStdOutLineListeners().size());
     assertEquals(1, builder.getStdErrLineListeners().size());
     assertEquals(1, builder.getExitListeners().size());
   }
@@ -85,7 +85,7 @@ public class CloudSdkTest {
     CloudSdk sdk = builder.build();
 
     assertNotNull(sdk.getRunDevAppServerWaitListener());
-    assertEquals(1, builder.getStdOutLineListeners().size());
+    assertEquals(2, builder.getStdOutLineListeners().size());
     assertEquals(2, builder.getStdErrLineListeners().size());
     assertEquals(1, builder.getExitListeners().size());
   }
