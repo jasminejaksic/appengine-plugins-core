@@ -22,6 +22,7 @@ import java.util.Map;
 public interface ProcessRunner {
 
   void run(String[] command) throws ProcessRunnerException;
+  String runSynchronously(String[] command) throws ProcessRunnerException;
 
   void setEnvironment(Map<String, String> environment);
 

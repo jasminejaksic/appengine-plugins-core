@@ -18,7 +18,6 @@ package com.google.cloud.tools.appengine.cloudsdk;
 
 import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;
-import com.google.cloud.tools.appengine.cloudsdk.internal.process.AccumulatingLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.DefaultProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunnerException;
@@ -77,7 +76,6 @@ public class CloudSdk {
   private final File appCommandCredentialFile;
   private final String appCommandOutputFormat;
   private final WaitingProcessOutputLineListener outputLineListener;
-  private final AccumulatingLineListener stdOutput;
 
   private CloudSdk(Path sdkPath,
                    String appCommandMetricsEnvironment,
@@ -85,8 +83,7 @@ public class CloudSdk {
                    @Nullable File appCommandCredentialFile,
                    String appCommandOutputFormat,
                    ProcessRunner processRunner,
-                   WaitingProcessOutputLineListener outputLineListener,
-                   AccumulatingLineListener stdOutput) {
+                   WaitingProcessOutputLineListener outputLineListener) {
     this.sdkPath = sdkPath;
     this.appCommandMetricsEnvironment = appCommandMetricsEnvironment;
     this.appCommandMetricsEnvironmentVersion = appCommandMetricsEnvironmentVersion;
@@ -94,7 +91,6 @@ public class CloudSdk {
     this.appCommandOutputFormat = appCommandOutputFormat;
     this.processRunner = processRunner;
     this.outputLineListener = outputLineListener;
-    this.stdOutput = stdOutput;
 
     // Populate jar locations.
     // TODO(joaomartins): Consider case where SDK doesn't contain these jars. Only App Engine
@@ -147,14 +143,7 @@ public class CloudSdk {
     command.add("--format=json");
     command.add("--filter=id:" + id);
     
-    if (stdOutput == null) {
-      throw new IllegalStateException("won't be able to read output");
-    }
-    
-    stdOutput.clear();
-    processRunner.run(command.toArray(new String[command.size()]));
-    
-    String json = stdOutput.getOutput().trim(); 
+    String json = processRunner.runSynchronously(command.toArray(new String[command.size()]));
     
     try {
       JSONTokener tokener = new JSONTokener(json);
@@ -469,14 +458,10 @@ public class CloudSdk {
 
       // Verify there aren't listeners if subprocess inherits output.
       // If output is inherited, then listeners won't receive anything.
-      AccumulatingLineListener stdOut = null;
       if (inheritProcessOutput
           && (stdOutLineListeners.size() > 0 || stdErrLineListeners.size() > 0)) {
         throw new AppEngineException("You cannot specify subprocess output inheritance and"
             + " output listeners.");
-      } else {
-        stdOut = new AccumulatingLineListener();
-        stdOutLineListeners.add(stdOut);
       }
 
       // Construct process runner.
@@ -503,7 +488,7 @@ public class CloudSdk {
 
       return new CloudSdk(sdkPath, appCommandMetricsEnvironment,
           appCommandMetricsEnvironmentVersion, appCommandCredentialFile, appCommandOutputFormat,
-          processRunner, runDevAppServerWaitListener, stdOut);
+          processRunner, runDevAppServerWaitListener);
     }
 
     /**

@@ -18,7 +18,7 @@ package com.google.cloud.tools.appengine.cloudsdk.internal.process;
 
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
 
-public class AccumulatingLineListener implements ProcessOutputLineListener {
+class AccumulatingLineListener implements ProcessOutputLineListener {
 
   private StringBuilder output = new StringBuilder();
   
@@ -27,8 +27,7 @@ public class AccumulatingLineListener implements ProcessOutputLineListener {
     output.append(line + "\n");
   }
 
-  // todo: maybe this should be a standard part of ProcessRunner API instead?
-  public String getOutput() {
+  String getOutput() {
     return output.toString(); 
   }
 
