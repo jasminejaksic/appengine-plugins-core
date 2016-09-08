@@ -46,12 +46,6 @@ public class CloudSdkTest {
     assertEquals(root.resolve("platform/google_appengine/google/appengine/tools/java/lib"),
         builder.build().getJavaAppEngineSdkPath());
   }
-  
-  @Test
-  public void testGetJavaAppEngineComponentsPath() {
-    assertEquals(root.resolve("platform/gcd/.appengine"),
-        builder.build().getJavaAppEngineComponentsPath());
-  }
 
   @Test
   public void testGetJarPathJavaTools() {
