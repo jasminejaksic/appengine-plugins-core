@@ -48,6 +48,10 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 /**
  * Cloud SDK CLI wrapper.
  */
@@ -151,8 +155,16 @@ public class CloudSdk {
     
     String json = stdOutput.getOutput(); 
     
-    // todo: parse the JSON
-    return json.contains("\"name\": \"Installed\"");
+    try {
+      JSONTokener tokener = new JSONTokener(json);
+      JSONObject object = new JSONObject(tokener);
+      JSONObject state = object.getJSONObject("state");
+      String name = state.getString("name");
+      return "Installed".equals(name);
+    } catch (JSONException | NullPointerException ex) {
+      throw new AppEngineException(
+          "Could not determine whether App Engine Java component is installed", ex);
+    }
   }
 
   /**
