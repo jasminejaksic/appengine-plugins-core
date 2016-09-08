@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -153,11 +154,15 @@ public class CloudSdk {
     stdOutput.clear();
     processRunner.run(command.toArray(new String[command.size()]));
     
-    String json = stdOutput.getOutput(); 
+    String json = stdOutput.getOutput().trim(); 
     
     try {
       JSONTokener tokener = new JSONTokener(json);
-      JSONObject object = new JSONObject(tokener);
+      JSONArray array = new JSONArray(tokener);
+      if (array.length() == 0) {
+        return false;
+      }
+      JSONObject object = array.getJSONObject(0);
       JSONObject state = object.getJSONObject("state");
       String name = state.getString("name");
       return "Installed".equals(name);
