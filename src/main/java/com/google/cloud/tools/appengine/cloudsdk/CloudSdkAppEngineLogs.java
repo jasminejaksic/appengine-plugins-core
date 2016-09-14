@@ -48,9 +48,10 @@ public class CloudSdkAppEngineLogs implements AppEngineLogs {
 
   /**
    * Read log entries.
+   * @throws AppEngineException 
    */
   @Override
-  public void read(LogsConfiguration configuration) {
+  public void read(LogsConfiguration configuration) throws AppEngineException {
     Preconditions.checkNotNull(configuration);
     Preconditions.checkNotNull(sdk);
 

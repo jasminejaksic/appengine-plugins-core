@@ -405,8 +405,9 @@ public class CloudSdk {
      *
      * <p>If {@code sdkPath} is not set, this method will look for the SDK in known install
      * locations.
+     * @throws AppEngineException if the Cloud SDK is not installed where expecte
      */
-    public CloudSdk build() {
+    public CloudSdk build() throws AppEngineException {
 
       // Default SDK path
       if (sdkPath == null) {
@@ -417,7 +418,7 @@ public class CloudSdk {
       // If output is inherited, then listeners won't receive anything.
       if (inheritProcessOutput
           && (stdOutLineListeners.size() > 0 || stdErrLineListeners.size() > 0)) {
-        throw new AppEngineException("You cannot specify subprocess output inheritance and"
+        throw new IllegalArgumentException("You cannot specify subprocess output inheritance and"
             + " output listeners.");
       }
 
@@ -455,7 +456,7 @@ public class CloudSdk {
      * @throws AppEngineException if not found
      */
     @Nonnull
-    private Path discoverSdkPath() {
+    private Path discoverSdkPath() throws AppEngineException {
       for (CloudSdkResolver resolver : getResolvers()) {
         try {
           Path discoveredSdkPath = resolver.getCloudSdkPath();

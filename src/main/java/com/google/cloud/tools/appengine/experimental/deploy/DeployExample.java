@@ -16,6 +16,7 @@
 
 package com.google.cloud.tools.appengine.experimental.deploy;
 
+import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.api.deploy.DefaultDeployConfiguration;
 import com.google.cloud.tools.appengine.cloudsdk.PathResolver;
 import com.google.cloud.tools.appengine.experimental.AppEngineRequestFactory;
@@ -31,8 +32,9 @@ public class DeployExample {
 
   /**
    * Example usage.
+   * @throws AppEngineException 
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws AppEngineException {
 
     // perhaps we should be using builders for execute configurations
     DefaultDeployConfiguration config = new DefaultDeployConfiguration();

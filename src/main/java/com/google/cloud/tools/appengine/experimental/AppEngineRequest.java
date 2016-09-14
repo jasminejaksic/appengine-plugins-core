@@ -18,6 +18,8 @@ package com.google.cloud.tools.appengine.experimental;
 
 import java.util.concurrent.Future;
 
+import com.google.cloud.tools.appengine.api.AppEngineException;
+
 /**
  * Interface for remote App Engine Requests.
  * @param <T> return request result type
@@ -26,5 +28,5 @@ public interface AppEngineRequest<T> {
 
   AppEngineRequest<T> outputHandler(OutputHandler outputHandler);
 
-  Future<T> execute();
+  Future<T> execute() throws AppEngineException;
 }
