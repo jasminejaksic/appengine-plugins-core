@@ -405,7 +405,7 @@ public class CloudSdk {
      *
      * <p>If {@code sdkPath} is not set, this method will look for the SDK in known install
      * locations.
-     * @throws AppEngineException if the Cloud SDK is not installed where expecte
+     * @throws AppEngineException if the Cloud SDK is not installed where expected
      */
     public CloudSdk build() throws AppEngineException {
 
