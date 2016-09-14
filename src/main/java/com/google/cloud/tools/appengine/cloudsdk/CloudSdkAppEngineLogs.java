@@ -48,7 +48,7 @@ public class CloudSdkAppEngineLogs implements AppEngineLogs {
 
   /**
    * Read log entries.
-   * @throws AppEngineException 
+   * @throws AppEngineException error communicating with server
    */
   @Override
   public void read(LogsConfiguration configuration) throws AppEngineException {

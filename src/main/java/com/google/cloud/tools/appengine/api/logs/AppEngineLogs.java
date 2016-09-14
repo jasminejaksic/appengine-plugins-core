@@ -25,7 +25,8 @@ public interface AppEngineLogs {
 
   /**
    * Reads log entries for the given App Engine application.
-   * @throws AppEngineException 
+   * 
+   * @throws AppEngineException error communicating with server
    */
   void read(LogsConfiguration configuration) throws AppEngineException;
 }
