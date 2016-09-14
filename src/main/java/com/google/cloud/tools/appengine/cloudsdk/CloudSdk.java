@@ -100,10 +100,11 @@ public class CloudSdk {
   /**
    * Uses the process runner to execute the gcloud app command with the provided arguments.
    *
-   * @param args The arguments to pass to "gcloud app" command.
+   * @param args command-line arguments to pass to "gcloud app" command.
    * @throws CloudSdkNotFoundException when the Cloud SDK is not installed where expected
    */
-  public void runAppCommand(List<String> args) throws ProcessRunnerException, CloudSdkNotFoundException {
+  public void runAppCommand(List<String> args) 
+      throws ProcessRunnerException, CloudSdkNotFoundException {
     validateCloudSdk();
 
     List<String> command = new ArrayList<>();
@@ -133,15 +134,16 @@ public class CloudSdk {
   /**
    * Uses the process runner to execute a dev_appserver.py command.
    *
-   * @param args the arguments to pass to dev_appserver.py
+   * @param args command-line arguments to pass to dev_appserver.py
    * @throws InvalidPathException      when Python can't be located
    * @throws ProcessRunnerException    when process runner encounters an error
    * @throws CloudSdkNotFoundException when the Cloud SDK is not installed where expected
-   * @throws AppEngineJavaComponentsNotInstalledException 
+   * @throws AppEngineJavaComponentsNotInstalledException java parts not installed in Cloud SDK
    * @throws AppEngineException        when dev_appserver.py cannot be found
    */
   public void runDevAppServerCommand(List<String> args) 
-      throws ProcessRunnerException, CloudSdkNotFoundException, AppEngineJavaComponentsNotInstalledException {
+      throws ProcessRunnerException, CloudSdkNotFoundException, 
+             AppEngineJavaComponentsNotInstalledException {
     validateCloudSdk();
     // TODO: remove this check when the auto-install for Java is fixed in dev_appserver.py
     validateAppEngineJavaComponents();
