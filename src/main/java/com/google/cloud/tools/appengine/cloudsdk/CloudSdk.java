@@ -103,7 +103,7 @@ public class CloudSdk {
    * @param args The arguments to pass to "gcloud app" command.
    * @throws CloudSdkNotFoundException when the Cloud SDK is not installed where expected
    */
-  public void runAppCommand(List<String> args) throws ProcessRunnerException {
+  public void runAppCommand(List<String> args) throws ProcessRunnerException, CloudSdkNotFoundException {
     validateCloudSdk();
 
     List<String> command = new ArrayList<>();
@@ -137,9 +137,11 @@ public class CloudSdk {
    * @throws InvalidPathException      when Python can't be located
    * @throws ProcessRunnerException    when process runner encounters an error
    * @throws CloudSdkNotFoundException when the Cloud SDK is not installed where expected
+   * @throws AppEngineJavaComponentsNotInstalledException 
    * @throws AppEngineException        when dev_appserver.py cannot be found
    */
-  public void runDevAppServerCommand(List<String> args) throws ProcessRunnerException {
+  public void runDevAppServerCommand(List<String> args) 
+      throws ProcessRunnerException, CloudSdkNotFoundException, AppEngineJavaComponentsNotInstalledException {
     validateCloudSdk();
     // TODO: remove this check when the auto-install for Java is fixed in dev_appserver.py
     validateAppEngineJavaComponents();
@@ -169,7 +171,8 @@ public class CloudSdk {
    * @throws AppEngineJavaComponentsNotInstalledException when the App Engine Java components are
    *                                                      not installed in the Cloud SDK
    */
-  public void runAppCfgCommand(List<String> args) throws ProcessRunnerException {
+  public void runAppCfgCommand(List<String> args) 
+      throws ProcessRunnerException, AppEngineJavaComponentsNotInstalledException {
     validateAppEngineJavaComponents();
 
     // AppEngineSdk requires this system property to be set.
