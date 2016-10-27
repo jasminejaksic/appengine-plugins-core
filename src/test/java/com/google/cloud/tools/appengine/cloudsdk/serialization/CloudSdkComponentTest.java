@@ -53,12 +53,12 @@ public class CloudSdkComponentTest {
 
     // Since the ordering of fields in JSON objects is not guaranteed, we cannot compare the full
     // strings for equality. Instead, use regexes to validate that key/value pairs are present.
-    assertJsonKeyValueExists("current_version_string", cloudSdkComponent.getCurrentVersionString(),
+    assertJsonKeyValueExists("current_version_string", cloudSdkComponent.getCurrentVersion(),
         result);
     assertJsonKeyValueExists("id", cloudSdkComponent.getId(), result);
     assertJsonKeyValueExists("is_configuration", cloudSdkComponent.getIsConfiguration(), result);
     assertJsonKeyValueExists("is_hidden", cloudSdkComponent.getIsHidden(), result);
-    assertJsonKeyValueExists("latest_version_string", cloudSdkComponent.getLatestVersionString(),
+    assertJsonKeyValueExists("latest_version_string", cloudSdkComponent.getLatestVersion(),
         result);
     assertJsonKeyValueExists("name", cloudSdkComponent.getName(), result);
     assertJsonKeyValueExists("size", cloudSdkComponent.getSizeInBytes(), result);
@@ -108,7 +108,7 @@ public class CloudSdkComponentTest {
 
     CloudSdkComponent expected = new CloudSdkComponent();
     expected.setState(state);
-    expected.setCurrentVersionString("1.9.43");
+    expected.setCurrentVersion("1.9.43");
         expected.setId("app-engine-java");
     expected.setIsConfiguration(false);
     expected.setIsHidden(false);
@@ -120,11 +120,11 @@ public class CloudSdkComponentTest {
   }
 
   private void assertCloudSdkComponentsEqual(CloudSdkComponent expected, CloudSdkComponent actual) {
-    assertEquals(expected.getCurrentVersionString(), actual.getCurrentVersionString());
+    assertEquals(expected.getCurrentVersion(), actual.getCurrentVersion());
     assertEquals(expected.getId(), actual.getId());
     assertEquals(expected.getIsConfiguration(), actual.getIsConfiguration());
     assertEquals(expected.getIsHidden(), actual.getIsHidden());
-    assertEquals(expected.getLatestVersionString(), actual.getLatestVersionString());
+    assertEquals(expected.getLatestVersion(), actual.getLatestVersion());
     assertEquals(expected.getName(), actual.getName());
     assertEquals(expected.getSizeInBytes(), actual.getSizeInBytes());
     assertEquals(expected.getState().getName(), actual.getState().getName());
