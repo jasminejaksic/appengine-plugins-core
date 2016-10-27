@@ -21,22 +21,29 @@ import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.DefaultProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunnerException;
+import com.google.cloud.tools.appengine.cloudsdk.internal.process.SynchronousOutputProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.WaitingProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessExitListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessStartListener;
+import com.google.cloud.tools.appengine.cloudsdk.serialization.CloudSdkComponent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,6 +52,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -72,6 +80,7 @@ public class CloudSdk {
   private final File appCommandCredentialFile;
   private final String appCommandOutputFormat;
   private final WaitingProcessOutputLineListener runDevAppServerWaitListener;
+  private final Gson gson;
 
   private CloudSdk(Path sdkPath,
                    String appCommandMetricsEnvironment,
@@ -87,6 +96,7 @@ public class CloudSdk {
     this.appCommandOutputFormat = appCommandOutputFormat;
     this.processRunner = processRunner;
     this.runDevAppServerWaitListener = runDevAppServerWaitListener;
+    this.gson = new Gson();
 
     // Populate jar locations.
     // TODO(joaomartins): Consider case where SDK doesn't contain these jars. Only App Engine
@@ -233,6 +243,59 @@ public class CloudSdk {
     logCommand(command);
 
     processRunner.run(command.toArray(new String[command.size()]));
+  }
+
+  /**
+   * Returns the version of the Cloud Sdk installation. Unlike other methods in this class that call
+   * gcloud, this method always uses a synchronous ProcessRunner and will block until the gcloud
+   * process returns.
+   *
+   * @throws ProcessRunnerException when process runner encounters an error
+   */
+  public String getVersion() throws ProcessRunnerException {
+    validateCloudSdk();
+
+    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
+
+    // gcloud info --format="value(basic.version)"
+    List<String> command = Lists.newArrayList(
+        getGCloudPath().toString(), "info");
+
+    command.addAll(GcloudArgs.get("format", "value(basic.version)"));
+
+    // TODO handle error exit codes
+    runner.run(command.toArray(new String[command.size()]));
+
+    return runner.getProcessStdOut();
+  }
+
+  /**
+   * Returns the list of CloudSdkComponents and their settings, reported by the current gcloud
+   * installation. Unlike other methods in this class that call gcloud, this method always uses a
+   * synchronous ProcessRunner and will block until the gcloud process returns.
+   *
+   * @throws ProcessRunnerException when process runner encounters an error
+   * @throws JsonSyntaxException    when the cloud SDK output cannot be parsed
+   */
+  public List<CloudSdkComponent> getComponents()
+      throws ProcessRunnerException, JsonSyntaxException {
+    validateCloudSdk();
+
+    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
+
+    // gcloud components list --show-versions --format=json
+    List<String> command = Lists.newArrayList(
+        getGCloudPath().toString(), "components", "list");
+
+    command.addAll(GcloudArgs.get("show-versions", true));
+    command.addAll(GcloudArgs.get("format", "json"));
+
+    // TODO handle error exit codes
+    runner.run(command.toArray(new String[command.size()]));
+
+    String json = runner.getProcessStdOut();
+    Type type = new TypeToken<List<CloudSdkComponent>>(){}.getType();
+    return gson.fromJson(json, type);
   }
 
   private void logCommand(List<String> command) {
