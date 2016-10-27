@@ -26,9 +26,9 @@ public class CloudSdkComponent {
   private String id;
   private String name;
   @SerializedName("current_version_string")
-  private String currentVersionString;
+  private String currentVersion;
   @SerializedName("latest_version_string")
-  private String latestVersionString;
+  private String latestVersion;
   @SerializedName("size")
   private Integer sizeInBytes;
   private State state;
@@ -53,20 +53,20 @@ public class CloudSdkComponent {
     this.name = name;
   }
 
-  public String getCurrentVersionString() {
-    return currentVersionString;
+  public String getCurrentVersion() {
+    return currentVersion;
   }
 
-  public void setCurrentVersionString(String currentVersionString) {
-    this.currentVersionString = currentVersionString;
+  public void setCurrentVersion(String currentVersion) {
+    this.currentVersion = currentVersion;
   }
 
-  public String getLatestVersionString() {
-    return latestVersionString;
+  public String getLatestVersion() {
+    return latestVersion;
   }
 
-  public void setLatestVersionString(String latestVersionString) {
-    this.latestVersionString = latestVersionString;
+  public void setLatestVersionString(String latestVersion) {
+    this.latestVersion = latestVersion;
   }
 
   public Integer getSizeInBytes() {
