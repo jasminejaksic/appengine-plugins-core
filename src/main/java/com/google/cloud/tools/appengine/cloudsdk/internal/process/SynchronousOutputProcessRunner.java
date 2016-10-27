@@ -29,16 +29,19 @@ public class SynchronousOutputProcessRunner extends DefaultProcessRunner impleme
 
   private StringBuilderProcessOutputLineListener stdOutListener;
   private StringBuilderProcessOutputLineListener stdErrListener;
+  private ExitCodeRecorderProcessExitListener exitListener;
 
   private SynchronousOutputProcessRunner(StringBuilderProcessOutputLineListener stdOutListener,
-                                         StringBuilderProcessOutputLineListener stdErrListener) {
+                                         StringBuilderProcessOutputLineListener stdErrListener,
+                                         ExitCodeRecorderProcessExitListener exitListener) {
     super(
         false                                                         /* async */,
-        Lists.<ProcessExitListener>newArrayList()                     /* exitListeners */,
+        Lists.<ProcessExitListener>newArrayList(exitListener)         /* exitListeners */,
         Lists.<ProcessStartListener>newArrayList()                    /* startListeners */,
         Lists.<ProcessOutputLineListener>newArrayList(stdOutListener) /* stdOutLineListeners */,
         Lists.<ProcessOutputLineListener>newArrayList(stdErrListener) /* stdErrLineListeners */);
 
+    this.exitListener = exitListener;
     this.stdOutListener = stdOutListener;
     this.stdErrListener = stdErrListener;
   }
@@ -57,10 +60,18 @@ public class SynchronousOutputProcessRunner extends DefaultProcessRunner impleme
     return stdErrListener.toString();
   }
 
+  /**
+   * Returns true if the monitored process has exited with an exit code of 0.
+   */
+  public boolean hasProcessExitedSuccessfully() {
+    Integer exitCode = exitListener.getMostRecentExitCode();
+    return exitCode != null && exitCode == 0;
+  }
+
   public static class Builder {
     public SynchronousOutputProcessRunner build() {
       return new SynchronousOutputProcessRunner(new StringBuilderProcessOutputLineListener(),
-          new StringBuilderProcessOutputLineListener());
+          new StringBuilderProcessOutputLineListener(), new ExitCodeRecorderProcessExitListener());
     }
   }
 

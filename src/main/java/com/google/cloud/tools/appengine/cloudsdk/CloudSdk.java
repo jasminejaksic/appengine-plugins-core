@@ -169,6 +169,26 @@ public class CloudSdk {
     processRunner.run(command.toArray(new String[command.size()]));
   }
 
+  private String runSynchronousGcloudCommand(List<String> args)
+      throws ProcessRunnerException {
+    validateCloudSdk();
+
+    // instantiate a separate synchronous process runner
+    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
+
+    // build and run the command
+    List<String> command = new ArrayList<>();
+    command.add(getGCloudPath().toString());
+    command.addAll(args);
+    runner.run(command.toArray(new String[command.size()]));
+
+    if (!runner.hasProcessExitedSuccessfully()) {
+      throw new ProcessRunnerException("Process exited unsuccessfully");
+    }
+
+    return runner.getProcessStdOut();
+  }
+
   /**
    * Uses the process runner to execute a dev_appserver.py command.
    *
@@ -256,18 +276,11 @@ public class CloudSdk {
   public String getVersion() throws ProcessRunnerException {
     validateCloudSdk();
 
-    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
-
     // gcloud info --format="value(basic.version)"
-    List<String> command = Lists.newArrayList(
-        getGCloudPath().toString(), "info");
-
+    List<String> command = Arrays.asList("info");
     command.addAll(GcloudArgs.get("format", "value(basic.version)"));
 
-    // TODO handle error exit codes
-    runner.run(command.toArray(new String[command.size()]));
-
-    return runner.getProcessStdOut();
+    return runSynchronousGcloudCommand(command);
   }
 
   /**
@@ -284,21 +297,14 @@ public class CloudSdk {
       throws ProcessRunnerException, JsonSyntaxException {
     validateCloudSdk();
 
-    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
-
     // gcloud components list --show-versions --format=json
-    List<String> command = Lists.newArrayList(
-        getGCloudPath().toString(), "components", "list");
-
+    List<String> command = Lists.newArrayList("components", "list");
     command.addAll(GcloudArgs.get("show-versions", true));
     command.addAll(GcloudArgs.get("format", "json"));
 
-    // TODO handle error exit codes
-    runner.run(command.toArray(new String[command.size()]));
-
-    String json = runner.getProcessStdOut();
+    String componentsJson = runSynchronousGcloudCommand(command);
     Type type = new TypeToken<List<CloudSdkComponent>>(){}.getType();
-    return gson.fromJson(json, type);
+    return gson.fromJson(componentsJson, type);
   }
 
   private void logCommand(List<String> command) {
