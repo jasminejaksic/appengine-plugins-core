@@ -266,10 +266,9 @@ public class CloudSdk {
   }
 
   /**
-   * Returns the version of the Cloud SDK installation.
-   *
-   * Unlike other methods in this class that call gcloud, this method always uses a synchronous
-   * ProcessRunner and will block until the gcloud process returns.
+   * Returns the version of the Cloud SDK installation. Unlike other methods in this class that call
+   * gcloud, this method always uses a synchronous ProcessRunner and will block until the gcloud
+   * process returns.
    *
    * @throws ProcessRunnerException when process runner encounters an error
    */
@@ -285,10 +284,8 @@ public class CloudSdk {
 
   /**
    * Returns the list of Cloud SDK Components and their settings, reported by the current gcloud
-   * installation.
-   *
-   * Unlike other methods in this class that call gcloud, this method always uses a synchronous
-   * ProcessRunner and will block until the gcloud process returns.
+   * installation. Unlike other methods in this class that call gcloud, this method always uses a
+   * synchronous ProcessRunner and will block until the gcloud process returns.
    *
    * @throws ProcessRunnerException when process runner encounters an error
    * @throws JsonSyntaxException when the cloud SDK output cannot be parsed
