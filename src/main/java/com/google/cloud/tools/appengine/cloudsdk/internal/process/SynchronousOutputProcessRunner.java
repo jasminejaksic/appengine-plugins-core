@@ -30,8 +30,6 @@ public class SynchronousOutputProcessRunner extends DefaultProcessRunner impleme
   private StringBuilderProcessOutputLineListener stdOutListener;
   private StringBuilderProcessOutputLineListener stdErrListener;
 
-  // TODO should constructor be more configurable?
-
   private SynchronousOutputProcessRunner(StringBuilderProcessOutputLineListener stdOutListener,
                                          StringBuilderProcessOutputLineListener stdErrListener) {
     super(
