@@ -19,6 +19,7 @@ package com.google.cloud.tools.appengine.cloudsdk.internal.process;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessExitListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessStartListener;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 /**
@@ -31,7 +32,8 @@ public class SynchronousOutputProcessRunner extends DefaultProcessRunner impleme
   private StringBuilderProcessOutputLineListener stdErrListener;
   private ExitCodeRecorderProcessExitListener exitListener;
 
-  private SynchronousOutputProcessRunner(StringBuilderProcessOutputLineListener stdOutListener,
+  @VisibleForTesting
+  SynchronousOutputProcessRunner(StringBuilderProcessOutputLineListener stdOutListener,
                                          StringBuilderProcessOutputLineListener stdErrListener,
                                          ExitCodeRecorderProcessExitListener exitListener) {
     super(
