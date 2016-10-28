@@ -276,7 +276,7 @@ public class CloudSdk {
     validateCloudSdk();
 
     // gcloud info --format="value(basic.version)"
-    List<String> command = Arrays.asList("info");
+    List<String> command = Lists.newArrayList("info");
     command.addAll(GcloudArgs.get("format", "value(basic.version)"));
 
     return runSynchronousGcloudCommand(command);
