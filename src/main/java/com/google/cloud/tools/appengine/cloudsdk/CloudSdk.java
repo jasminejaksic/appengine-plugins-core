@@ -27,6 +27,7 @@ import com.google.cloud.tools.appengine.cloudsdk.process.ProcessExitListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessStartListener;
 import com.google.cloud.tools.appengine.cloudsdk.serialization.CloudSdkComponent;
+import com.google.cloud.tools.appengine.cloudsdk.serialization.CloudSdkVersion;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -272,14 +273,14 @@ public class CloudSdk {
    *
    * @throws ProcessRunnerException when process runner encounters an error
    */
-  public String getVersion() throws ProcessRunnerException {
+  public CloudSdkVersion getVersion() throws ProcessRunnerException {
     validateCloudSdk();
 
     // gcloud info --format="value(basic.version)"
     List<String> command = Lists.newArrayList("info");
     command.addAll(GcloudArgs.get("format", "value(basic.version)"));
 
-    return runSynchronousGcloudCommand(command);
+    return new CloudSdkVersion(runSynchronousGcloudCommand(command));
   }
 
   /**
