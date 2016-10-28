@@ -23,7 +23,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -70,6 +74,23 @@ public class CloudSdkComponentTest {
     String serialized = gson.toJson(initial);
     CloudSdkComponent result = gson.fromJson(serialized, CloudSdkComponent.class);
     assertCloudSdkComponentsEqual(initial, result);
+  }
+
+  @Test
+  public void testStateIsInstalled_true() {
+    CloudSdkComponent.State state = new CloudSdkComponent.State();
+    state.setName("Installed");
+    assertTrue(state.isInstalled());
+  }
+
+  @Test
+  public void testStateIsInstalled_false() {
+    List<String> notInstalledStates = Arrays.asList("uninstalled", "not installed", "", null);
+    for (String stateName : notInstalledStates) {
+      CloudSdkComponent.State state = new CloudSdkComponent.State();
+      state.setName(stateName);
+      assertFalse(state.isInstalled());
+    }
   }
 
   private void assertJsonKeyValueExists(String expectedKey, String expectedValue, String result) {

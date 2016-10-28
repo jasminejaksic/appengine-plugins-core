@@ -104,6 +104,10 @@ public class CloudSdkComponent {
   static class State {
     private String name;
 
+    public boolean isInstalled() {
+      return "Installed".equals(name);
+    }
+
     public String getName() {
       return name;
     }
