@@ -21,7 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,8 +52,8 @@ public class CloudSdkVersion implements Comparable<CloudSdkVersion> {
 
   @Override
   public int compareTo(CloudSdkVersion otherVersion) {
-    List<Integer> mine = new LinkedList<>(this.versionComponents);
-    List<Integer> other = new LinkedList<>(otherVersion.getVersionComponents());
+    List<Integer> mine = new ArrayList<>(this.versionComponents);
+    List<Integer> other = new ArrayList<>(otherVersion.getVersionComponents());
 
     // if both versions don't have the same number of components, pad the smaller one with zeros
     rightPadZerosUntilSameLength(mine, other);
@@ -87,8 +87,8 @@ public class CloudSdkVersion implements Comparable<CloudSdkVersion> {
     CloudSdkVersion otherVersion = (CloudSdkVersion) obj;
 
     // if both versions don't have the same number of components, pad the smaller one with zeros
-    List<Integer> mine = new LinkedList<>(this.versionComponents);
-    List<Integer> other = new LinkedList<>(otherVersion.getVersionComponents());
+    List<Integer> mine = new ArrayList<>(this.versionComponents);
+    List<Integer> other = new ArrayList<>(otherVersion.getVersionComponents());
     rightPadZerosUntilSameLength(mine, other);
 
     return Iterables.elementsEqual(mine, other);
