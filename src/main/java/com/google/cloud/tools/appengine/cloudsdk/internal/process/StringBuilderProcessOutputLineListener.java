@@ -21,7 +21,7 @@ import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListen
 /**
  * A ProcessOutputLineListener that uses a StringBuilder to store the contents of all lines.
  */
-class StringBuilderProcessOutputLineListener implements ProcessOutputLineListener {
+public class StringBuilderProcessOutputLineListener implements ProcessOutputLineListener {
 
   private StringBuilder stringBuilder;
 
