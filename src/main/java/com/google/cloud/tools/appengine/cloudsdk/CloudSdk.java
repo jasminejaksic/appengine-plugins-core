@@ -19,9 +19,10 @@ package com.google.cloud.tools.appengine.cloudsdk;
 import com.google.cloud.tools.appengine.api.AppEngineException;
 import com.google.cloud.tools.appengine.cloudsdk.internal.args.GcloudArgs;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.DefaultProcessRunner;
+import com.google.cloud.tools.appengine.cloudsdk.internal.process.ExitCodeRecorderProcessExitListener;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunner;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.ProcessRunnerException;
-import com.google.cloud.tools.appengine.cloudsdk.internal.process.SynchronousOutputProcessRunner;
+import com.google.cloud.tools.appengine.cloudsdk.internal.process.StringBuilderProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.internal.process.WaitingProcessOutputLineListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessExitListener;
 import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
@@ -173,8 +174,28 @@ public class CloudSdk {
       throws ProcessRunnerException {
     validateCloudSdk();
 
-    // instantiate a separate synchronous process runner
-    SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
+    StringBuilderProcessOutputLineListener stdErrListener =
+        new StringBuilderProcessOutputLineListener();
+    StringBuilderProcessOutputLineListener stdOutListener =
+        new StringBuilderProcessOutputLineListener();
+    ExitCodeRecorderProcessExitListener ourExitListener = new ExitCodeRecorderProcessExitListener();
+    processRunner.addStdErrListener(stdErrListener);
+    processRunner.addStdOutListener(stdOutListener);
+    processRunner.addExitListener(ourExitListener);
+    /*
+    Or do
+
+    ProcessRunner processRunner = new DefaultProcessRunner(
+        false,
+        ImmutableList.<ProcessExitListener>of(ourExitListener),
+        ImmutableList.<ProcessStartListener>of(),
+        ImmutableList.<ProcessOutputLineListener>of(stdOutListener),
+        ImmutableList.<ProcessOutputLineListener>of(stdErrListener));
+
+    and don't send output to user's listeners, but still doesn't need
+     SynchronousOutputProcessRunner. Also clears the need for the add/remove listener methods in
+     the interface.
+     */
 
     // build and run the command
     List<String> command = new ImmutableList.Builder<String>()
@@ -182,13 +203,18 @@ public class CloudSdk {
         .addAll(args)
         .build();
 
-    runner.run(command.toArray(new String[command.size()]));
+    processRunner.run(command.toArray(new String[command.size()]));
 
-    if (!runner.hasProcessExitedSuccessfully()) {
+    processRunner.removeStdErrListener(stdErrListener);
+    processRunner.removeStdOutListener(stdOutListener);
+    processRunner.removeExitListener(ourExitListener);
+
+    if (ourExitListener.getMostRecentExitCode() != null
+        && ourExitListener.getMostRecentExitCode() != 0) {
       throw new ProcessRunnerException("Process exited unsuccessfully");
     }
 
-    return runner.getProcessStdOut();
+    return stdOutListener.toString();
   }
 
   /**

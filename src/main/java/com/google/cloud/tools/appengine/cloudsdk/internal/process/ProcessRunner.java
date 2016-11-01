@@ -14,6 +14,9 @@
 
 package com.google.cloud.tools.appengine.cloudsdk.internal.process;
 
+import com.google.cloud.tools.appengine.cloudsdk.process.ProcessExitListener;
+import com.google.cloud.tools.appengine.cloudsdk.process.ProcessOutputLineListener;
+
 import java.util.Map;
 
 /**
@@ -25,4 +28,15 @@ public interface ProcessRunner {
 
   void setEnvironment(Map<String, String> environment);
 
+  void addStdErrListener(ProcessOutputLineListener stdErrListener);
+
+  void addStdOutListener(ProcessOutputLineListener stdOutListener);
+
+  void addExitListener(ProcessExitListener exitListener);
+
+  void removeStdErrListener(ProcessOutputLineListener stdErrListener);
+
+  void removeStdOutListener(ProcessOutputLineListener stdOutListener);
+
+  void removeExitListener(ProcessExitListener exitListener);
 }

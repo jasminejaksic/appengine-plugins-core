@@ -216,4 +216,34 @@ public class DefaultProcessRunner implements ProcessRunner {
       }
     });
   }
+
+  @Override
+  public void addStdOutListener(ProcessOutputLineListener stdOutListener) {
+    stdOutLineListeners.add(stdOutListener);
+  }
+
+  @Override
+  public void addExitListener(ProcessExitListener exitListener) {
+    exitListeners.add(exitListener);
+  }
+
+  @Override
+  public void addStdErrListener(ProcessOutputLineListener stdErrListener) {
+    stdErrLineListeners.add(stdErrListener);
+  }
+
+  @Override
+  public void removeStdErrListener(ProcessOutputLineListener stdErrListener) {
+    stdErrLineListeners.remove(stdErrListener);
+  }
+
+  @Override
+  public void removeStdOutListener(ProcessOutputLineListener stdOutListener) {
+    stdOutLineListeners.remove(stdOutListener);
+  }
+
+  @Override
+  public void removeExitListener(ProcessExitListener exitListener) {
+    exitListeners.remove(exitListener);
+  }
 }
