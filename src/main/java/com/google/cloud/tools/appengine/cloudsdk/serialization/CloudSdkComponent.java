@@ -16,7 +16,13 @@
 
 package com.google.cloud.tools.appengine.cloudsdk.serialization;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Representation of a CloudSdkComponent. Used for json serialzation/deserialization.
@@ -36,6 +42,21 @@ public class CloudSdkComponent {
   private Boolean isConfiguration;
   @SerializedName("is_hidden")
   private Boolean isHidden;
+
+  private static final Gson gson = new Gson();
+
+  public String toJson() {
+    return gson.toJson(this);
+  }
+
+  public static CloudSdkComponent fromJson(String json) throws JsonSyntaxException {
+    return gson.fromJson(json, CloudSdkComponent.class);
+  }
+
+  public static List<CloudSdkComponent> fromJsonList(String jsonList) throws JsonSyntaxException {
+    Type type = new TypeToken<List<CloudSdkComponent>>(){}.getType();
+    return gson.fromJson(jsonList, type);
+  }
 
   public String getId() {
     return id;

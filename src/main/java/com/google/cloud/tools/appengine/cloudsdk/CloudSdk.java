@@ -34,12 +34,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -81,7 +78,6 @@ public class CloudSdk {
   private final File appCommandCredentialFile;
   private final String appCommandOutputFormat;
   private final WaitingProcessOutputLineListener runDevAppServerWaitListener;
-  private final Gson gson;
 
   private CloudSdk(Path sdkPath,
                    String appCommandMetricsEnvironment,
@@ -97,7 +93,6 @@ public class CloudSdk {
     this.appCommandOutputFormat = appCommandOutputFormat;
     this.processRunner = processRunner;
     this.runDevAppServerWaitListener = runDevAppServerWaitListener;
-    this.gson = new Gson();
 
     // Populate jar locations.
     // TODO(joaomartins): Consider case where SDK doesn't contain these jars. Only App Engine
@@ -174,8 +169,7 @@ public class CloudSdk {
   // used for the execution of short-running gcloud commands, especially when we need to do some
   // additional processing of the gcloud command's output before returning. In all other cases, this
   // class's main configured ProcessRunner should be used.
-  @VisibleForTesting
-  protected String runSynchronousGcloudCommand(List<String> args)
+  private String runSynchronousGcloudCommand(List<String> args)
       throws ProcessRunnerException {
     validateCloudSdk();
 
@@ -312,8 +306,7 @@ public class CloudSdk {
         .build();
 
     String componentsJson = runSynchronousGcloudCommand(command);
-    Type type = new TypeToken<List<CloudSdkComponent>>(){}.getType();
-    return gson.fromJson(componentsJson, type);
+    return CloudSdkComponent.fromJsonList(componentsJson);
   }
 
   private void logCommand(List<String> command) {

@@ -16,9 +16,6 @@
 
 package com.google.cloud.tools.appengine.cloudsdk.serialization;
 
-import com.google.gson.Gson;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -36,24 +33,34 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class CloudSdkComponentTest {
 
-  private Gson gson;
-
-  @Before
-  public void setup() {
-    this.gson = new Gson();
-  }
-
   @Test
-  public void testGsonDeserializeJson() {
-    CloudSdkComponent result = gson.fromJson(getJson(), CloudSdkComponent.class);
-    CloudSdkComponent expected = getCloudSdkComponent();
+  public void testFromJson() {
+    CloudSdkComponent result = CloudSdkComponent.fromJson(getCloudSdkComponentTestFixtureAsJson());
+    CloudSdkComponent expected = getCloudSdkComponentTestFixture();
     assertCloudSdkComponentsEqual(expected, result);
   }
 
   @Test
-  public void testGsonSerialization() {
-    CloudSdkComponent cloudSdkComponent = getCloudSdkComponent();
-    String result = gson.toJson(cloudSdkComponent);
+  public void testFromJsonList_nonempty() {
+    String jsonList = "[" + getCloudSdkComponentTestFixtureAsJson() + "]";
+    List<CloudSdkComponent> result = CloudSdkComponent.fromJsonList(jsonList);
+
+    assertEquals(1, result.size());
+    assertCloudSdkComponentsEqual(getCloudSdkComponentTestFixture(), result.get(0));
+  }
+
+  @Test
+  public void testFromJsonList_empty() {
+    String emptyList = "[]";
+    List<CloudSdkComponent> result = CloudSdkComponent.fromJsonList(emptyList);
+
+    assertEquals(0, result.size());
+  }
+
+  @Test
+  public void testToJson() {
+    CloudSdkComponent cloudSdkComponent = getCloudSdkComponentTestFixture();
+    String result = cloudSdkComponent.toJson();
 
     // Since the ordering of fields in JSON objects is not guaranteed, we cannot compare the full
     // strings for equality. Instead, use regexes to validate that key/value pairs are present.
@@ -69,10 +76,10 @@ public class CloudSdkComponentTest {
   }
 
   @Test
-  public void testGsonSerializationDeserialization() {
-    CloudSdkComponent initial = getCloudSdkComponent();
-    String serialized = gson.toJson(initial);
-    CloudSdkComponent result = gson.fromJson(serialized, CloudSdkComponent.class);
+  public void testToAndFromJson() {
+    CloudSdkComponent initial = getCloudSdkComponentTestFixture();
+    String serialized = initial.toJson();
+    CloudSdkComponent result = CloudSdkComponent.fromJson(serialized);
     assertCloudSdkComponentsEqual(initial, result);
   }
 
@@ -108,7 +115,7 @@ public class CloudSdkComponentTest {
     assertTrue(result.matches(regex));
   }
 
-  private String getJson() {
+  private String getCloudSdkComponentTestFixtureAsJson() {
     return "{" +
         "\"current_version_string\": \"1.9.43\"," +
         "\"id\": \"app-engine-java\"," +
@@ -123,7 +130,7 @@ public class CloudSdkComponentTest {
       "}";
   }
 
-  private CloudSdkComponent getCloudSdkComponent() {
+  private CloudSdkComponent getCloudSdkComponentTestFixture() {
     CloudSdkComponent.State state = new CloudSdkComponent.State();
     state.setName("Installed");
 
