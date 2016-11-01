@@ -64,6 +64,13 @@ public class CloudSdkVersionTest {
   }
 
   @Test
+  public void testEquals_refEqual() {
+    CloudSdkVersion v1 = new CloudSdkVersion("1");
+    CloudSdkVersion v2 = v1;
+    assertTrue(v1.equals(v2));
+  }
+
+  @Test
   public void testCompareTo_sort() {
     List<CloudSdkVersion> ordered = Arrays.asList(new CloudSdkVersion("0"),
         new CloudSdkVersion("0.0.1"), new CloudSdkVersion("0.1"), new CloudSdkVersion("0.1.1"),
