@@ -31,6 +31,7 @@ import com.google.cloud.tools.appengine.cloudsdk.serialization.CloudSdkVersion;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
@@ -44,7 +45,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -170,7 +170,12 @@ public class CloudSdk {
     processRunner.run(command.toArray(new String[command.size()]));
   }
 
-  private String runSynchronousGcloudCommand(List<String> args)
+  // Runs a gcloud command synchronously, with a new ProcessRunner. This method is intended to be
+  // used for the execution of short-running gcloud commands, especially when we need to do some
+  // additional processing of the gcloud command's output before returning. In all other cases, this
+  // class's main configured ProcessRunner should be used.
+  @VisibleForTesting
+  protected String runSynchronousGcloudCommand(List<String> args)
       throws ProcessRunnerException {
     validateCloudSdk();
 
@@ -178,9 +183,11 @@ public class CloudSdk {
     SynchronousOutputProcessRunner runner = new SynchronousOutputProcessRunner.Builder().build();
 
     // build and run the command
-    List<String> command = new ArrayList<>();
-    command.add(getGCloudPath().toString());
-    command.addAll(args);
+    List<String> command = new ImmutableList.Builder<String>()
+        .add(getGCloudPath().toString())
+        .addAll(args)
+        .build();
+
     runner.run(command.toArray(new String[command.size()]));
 
     if (!runner.hasProcessExitedSuccessfully()) {
@@ -277,8 +284,10 @@ public class CloudSdk {
     validateCloudSdk();
 
     // gcloud info --format="value(basic.version)"
-    List<String> command = Lists.newArrayList("info");
-    command.addAll(GcloudArgs.get("format", "value(basic.version)"));
+    List<String> command = new ImmutableList.Builder<String>()
+        .add("info")
+        .addAll(GcloudArgs.get("format", "value(basic.version)"))
+        .build();
 
     return new CloudSdkVersion(runSynchronousGcloudCommand(command));
   }
@@ -296,9 +305,11 @@ public class CloudSdk {
     validateCloudSdk();
 
     // gcloud components list --show-versions --format=json
-    List<String> command = Lists.newArrayList("components", "list");
-    command.addAll(GcloudArgs.get("show-versions", true));
-    command.addAll(GcloudArgs.get("format", "json"));
+    List<String> command = new ImmutableList.Builder<String>()
+        .add("components", "list")
+        .addAll(GcloudArgs.get("show-versions", true))
+        .addAll(GcloudArgs.get("format", "json"))
+        .build();
 
     String componentsJson = runSynchronousGcloudCommand(command);
     Type type = new TypeToken<List<CloudSdkComponent>>(){}.getType();
