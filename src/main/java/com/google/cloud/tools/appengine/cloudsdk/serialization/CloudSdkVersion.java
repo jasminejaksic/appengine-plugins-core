@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents the version of the Cloud SDK.
+ * Represents the version of the Cloud SDK. Expects a version to be a series of integers separated
+ * by the '.' character. This class does not handle versions strings that are intended to be
+ * human-readable, i.e 'v1beta3-1.0.0'.
  */
 public class CloudSdkVersion implements Comparable<CloudSdkVersion> {
 
@@ -73,6 +75,10 @@ public class CloudSdkVersion implements Comparable<CloudSdkVersion> {
     return Objects.hash(versionComponents);
   }
 
+  /**
+   * Compares objects for equality. Two CloudSdkVersions are considered equal if, from left to
+   * right, their version integers are equal.
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj == null) {
@@ -86,12 +92,7 @@ public class CloudSdkVersion implements Comparable<CloudSdkVersion> {
     }
     CloudSdkVersion otherVersion = (CloudSdkVersion) obj;
 
-    // if both versions don't have the same number of components, pad the smaller one with zeros
-    List<Integer> mine = new ArrayList<>(this.versionComponents);
-    List<Integer> other = new ArrayList<>(otherVersion.getVersionComponents());
-    rightPadZerosUntilSameLength(mine, other);
-
-    return Iterables.elementsEqual(mine, other);
+    return this.compareTo(otherVersion) == 0;
   }
 
   protected List<Integer> getVersionComponents() {
